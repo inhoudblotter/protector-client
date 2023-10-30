@@ -1,0 +1,96 @@
+.content {
+  height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: height 0.5s ease-in-out, opacity 0.5s ease-in-out,
+    margin-bottom 0.5s ease-in-out;
+  margin-bottom: 0;
+}
+
+.open .content {
+  height: var(--height);
+  opacity: 1;
+  margin-bottom: 15px;
+}
+
+.trigger {
+  display: flex;
+  align-items: center;
+  margin-bottom: 25px;
+  padding: 0 7px 0 0;
+  width: 100%;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out;
+}
+
+.title {
+  margin: 0 15px 0 0;
+  font: var(--font-h1);
+  color: var(--color-text);
+}
+
+.arrow,
+.line {
+  height: 3px;
+  background-color: var(--color-text);
+}
+
+.line {
+  flex-grow: 1;
+  width: 100%;
+  border-radius: 2px;
+  transform: translateX(2px);
+}
+
+.arrow {
+  position: relative;
+  flex-shrink: 0;
+  width: 25px;
+  border-radius: 2px;
+  transform-origin: 0 0;
+  transition: transform 0.3s ease-in-out;
+}
+
+.arrow::after {
+  content: "";
+  position: absolute;
+  right: -5px;
+  padding: 4px;
+  border: solid var(--color-text);
+  border-width: 3px 3px 0px 0;
+  border-radius: 2px;
+  transform: rotate(45deg) translateX(-50%);
+}
+
+.open .trigger {
+  transform: translateX(25px);
+}
+
+.open .arrow {
+  transform: rotate(90deg) translateY(-2px);
+}
+
+.trigger:focus {
+  outline: none;
+}
+
+.trigger:focus-visible .title {
+  color: var(--color-accent-light);
+}
+
+.trigger:focus-visible .arrow,
+.trigger:focus-visible .line {
+  background-color: var(--color-accent-light);
+}
+
+.trigger:focus-visible .arrow::after {
+  border-color: var(--color-accent-light);
+}
+
+@media (max-width: 1023px) {
+  .trigger {
+    margin-bottom: 15px;
+  }
+}

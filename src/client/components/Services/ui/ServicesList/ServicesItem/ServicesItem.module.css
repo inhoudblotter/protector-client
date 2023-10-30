@@ -1,0 +1,26 @@
+.item {
+  display: flex;
+  align-items: center;
+}
+
+.checkbox {
+  margin-right: 10px;
+}
+
+.title {
+  margin: 0 10px 0 0;
+  font: var(--font-text);
+  color: var(--color-text);
+}
+
+.sep {
+  flex-grow: 1;
+  margin-right: 10px;
+  border-bottom: 2px dotted var(--color-text);
+  font: var(--font-text);
+  height: calc(1em * 1.2);
+}
+
+.price {
+  font: var(--font-text);
+}

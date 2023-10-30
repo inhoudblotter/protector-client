@@ -1,0 +1,9 @@
+.title {
+  margin: 0 0 15px;
+  font: var(--font-h1);
+  color: var(--color-text);
+}
+
+.item {
+  margin-bottom: 15px;
+}

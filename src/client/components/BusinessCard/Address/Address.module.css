@@ -1,0 +1,9 @@
+.container div:not(:last-child) {
+  margin-bottom: 15px;
+}
+
+.title {
+  margin: 0 0 15px;
+  font: var(--font-h1);
+  color: var(--color-text);
+}

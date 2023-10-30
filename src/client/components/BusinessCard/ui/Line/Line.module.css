@@ -1,0 +1,17 @@
+.container {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 2px solid var(--color-text);
+}
+
+.label,
+.value {
+  margin: 0;
+  font: var(--font-text);
+  font-style: normal;
+}
+
+.value {
+  color: inherit;
+  text-decoration: none;
+}

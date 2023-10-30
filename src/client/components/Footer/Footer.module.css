@@ -1,0 +1,17 @@
+.footer {
+  margin-top: auto;
+  background-color: var(--color-text);
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25px var(--padding-container);
+}
+
+.copyright {
+  font: var(--font-text);
+  font-weight: 300;
+  color: var(--color-bg);
+}
