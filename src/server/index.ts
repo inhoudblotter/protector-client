@@ -46,8 +46,6 @@ async function createServer() {
 
   app.use(express.static(resolve("public")));
 
-  console.log(resolve("public"));
-
   if (isProd) {
     app.use(compression());
   }

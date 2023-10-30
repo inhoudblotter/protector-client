@@ -1,10 +1,10 @@
 {
   "public": true,
   "rewrites": [{ "source": "/(.*)", "destination": "/dist" }],
-  "redirects": [
+  "builds": [
     {
-      "source": "/assets/:file",
-      "destination": "/public/assets/:file"
+      "src": "public/**",
+      "use": "@vercel/static"
     }
   ]
 }
