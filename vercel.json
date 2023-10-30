@@ -1,5 +1,5 @@
 {
   "public": true,
-  "rewrites": [{ "source": "/(.*)", "destination": "./dist/index.js" }],
-  "builds": [{ "src": "*.js", "use": "@vercel/node" }]
+  "rewrites": [{ "source": "/(.*)", "destination": "index.js" }],
+  "builds": [{ "src": "index.js", "use": "@vercel/node" }]
 }
