@@ -88,6 +88,7 @@ async function createServer() {
   app.listen(PORT, () => {
     console.log(`Server starts on http://localhost:${PORT}`);
   });
+  return app;
 }
 
-createServer();
+export default createServer();
