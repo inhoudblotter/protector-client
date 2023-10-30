@@ -1,4 +1,9 @@
 {
   "public": true,
-  "rewrites": [{ "source": "/(.*)", "destination": "/dist/index.js" }]
+  "rewrites": [{ "source": "/(.*)", "destination": "/dist" }],
+  "functions": {
+    "/dist/index.js": {
+      "runtime": "vercel-node"
+    }
+  }
 }
