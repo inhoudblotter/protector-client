@@ -4,8 +4,7 @@
   "redirects": [
     {
       "source": "/assets/:file",
-      "destination": "/public/assets/:file",
-      "statusCode": 200
+      "destination": "/public/assets/:file"
     }
   ]
 }
