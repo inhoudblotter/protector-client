@@ -1,4 +1,5 @@
 {
   "public": true,
-  "rewrites": [{ "source": "/(.*)", "destination": "/dist" }]
+  "rewrites": [{ "source": "/(.*)", "destination": "/dist" }],
+  "redirects": [{ "source": "/assets/:file", "destination": "/public/:file" }]
 }
