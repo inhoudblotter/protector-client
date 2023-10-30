@@ -8,6 +8,7 @@ import { createServer as createViteServer } from "vite";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const isTest = process.env.NODE_ENV === "test" || !!process.env.VITE_TEST_BUILD;
 const isProd = process.env.NODE_ENV === "production";
+const isVercel = process.env.DEPLOYMENT_ENV === "vercel";
 
 export const resolve = (p: string) => path.resolve(__dirname, p);
 
@@ -85,9 +86,12 @@ async function createServer() {
 
   const PORT = process.env.PORT || 5173;
 
-  app.listen(PORT, () => {
-    console.log(`Server starts on http://localhost:${PORT}`);
-  });
+  if (!isVercel) {
+    app.listen(PORT, () => {
+      console.log(`Server starts on http://localhost:${PORT}`);
+    });
+  }
+
   return app;
 }
 
