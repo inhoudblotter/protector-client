@@ -1,10 +1,10 @@
 import { h } from "preact";
-import { ServicesItem } from "./ServicesItem";
+import { IServicesItem, ServicesItem } from "./ServicesItem";
 import styles from "./ServicesList.module.css";
 
 export interface IServicesList
   extends h.JSX.HTMLAttributes<HTMLFieldSetElement> {
-  services: { title: string; price: number; checkbox?: boolean }[];
+  services: IServicesItem[];
 }
 
 export function ServicesList({ services, class: className }: IServicesList) {

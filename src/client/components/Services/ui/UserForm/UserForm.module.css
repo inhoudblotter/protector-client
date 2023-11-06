@@ -1,0 +1,22 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  padding: var(--margin-block);
+  min-width: 355px;
+  min-height: 280px;
+}
+
+.input {
+  margin-bottom: var(--margin-block);
+}
+
+.personalData {
+  max-width: 355px;
+  font: var(--font-caption);
+  color: var(--color-text);
+}
+
+.btn {
+  margin-top: auto;
+  margin-bottom: var(--margin-block);
+}

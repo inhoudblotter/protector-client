@@ -45,3 +45,17 @@
 .input:checked + .label {
   background-color: var(--color-accent-darken);
 }
+
+.input:focus {
+  outline: none;
+}
+
+.input:focus-visible + .label {
+  background-color: var(--color-accent-darken);
+}
+
+@media (hover: hover) {
+  .input:hover + .label {
+    background-color: var(--color-accent-darken);
+  }
+}

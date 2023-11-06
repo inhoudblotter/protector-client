@@ -2,17 +2,23 @@ import { h } from "preact";
 import { Checkbox } from "src/client/shared/ui/Checkbox";
 import styles from "./ServicesItem.module.css";
 
-interface IServicesItem extends h.JSX.HTMLAttributes<HTMLDivElement> {
+export interface IServicesItem extends h.JSX.HTMLAttributes<HTMLInputElement> {
   title: string;
   price: number;
   checkbox?: boolean;
+  lighten?: boolean;
 }
 
-export function ServicesItem({ title, price, checkbox = true }: IServicesItem) {
+export function ServicesItem({
+  title,
+  price,
+  checkbox = true,
+  ...props
+}: IServicesItem) {
   return (
     <li class={styles.item}>
       {checkbox ? (
-        <Checkbox title={title} class={styles.checkbox} />
+        <Checkbox title={title} class={styles.checkbox} {...props} />
       ) : (
         <h3 class={styles.title}>{title}</h3>
       )}

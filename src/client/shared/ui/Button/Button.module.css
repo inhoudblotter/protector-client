@@ -7,4 +7,29 @@
   font-weight: 600;
   color: var(--color-bg);
   cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.btn:focus {
+  outline: none;
+}
+
+.btn:focus-visible {
+  background-color: var(--color-accent-light);
+}
+
+@media (hover: hover) {
+  .btn:hover {
+    background-color: var(--color-accent-light);
+  }
+}
+
+.btn:active {
+  background-color: var(--color-accent-darken);
+}
+
+.btn:disabled {
+  background-color: var(--color-accent-darken);
+  opacity: 0.5;
+  cursor: not-allowed;
 }

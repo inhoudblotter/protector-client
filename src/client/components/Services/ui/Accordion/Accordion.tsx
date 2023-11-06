@@ -1,42 +1,56 @@
 import { h } from "preact";
-import { useEffect, useRef, useState, useCallback } from "preact/hooks";
+import { useEffect, useRef, useState, useCallback, useId } from "preact/hooks";
 import styles from "./Accordion.module.css";
+import { useCloseByClickOutside } from "src/client/shared/hooks/useCloseByClickOutside";
 
 interface IAccordion extends h.JSX.HTMLAttributes<HTMLDivElement> {
   title: string;
+  onOpen?: () => void;
+  onClose?: () => void;
 }
 
-export function Accordion({ title, children }: IAccordion) {
+export function Accordion({ title, children, onOpen, onClose }: IAccordion) {
   const [isOpen, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const [windowWidth, setWindowWidth] = useState<number>();
+  const close = useCallback(() => {
+    setOpen(false);
+    if (onClose) onClose();
+  }, [onClose, setOpen]);
+
+  const handleResize = useCallback(() => {
+    setWindowWidth(window.innerWidth);
+  }, [setWindowWidth]);
 
   const handleClick = useCallback(() => {
-    setOpen(!isOpen);
-  }, [isOpen, setOpen]);
+    if (isOpen) {
+      close();
+    } else setOpen(true);
+  }, [isOpen, setOpen, close]);
 
   useEffect(() => {
     const content = contentRef.current;
     if (content)
       content.style.setProperty("--height", `${content.scrollHeight}px`);
-  }, [contentRef]);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [contentRef, windowWidth]);
 
-  const closeByClickOutside = useCallback(
-    (e: MouseEvent) => {
-      const el = ref.current;
-      if (el && e.target instanceof Node && !el.contains(e.target))
-        setOpen(false);
-    },
-    [ref]
-  );
+  const id = useId();
+
+  useCloseByClickOutside({
+    closeFunction: close,
+    containerRef: ref,
+    isOpen,
+    id,
+  });
 
   useEffect(() => {
-    if (isOpen) {
-      document.body.addEventListener("click", closeByClickOutside);
-    } else document.body.removeEventListener("click", closeByClickOutside);
-    return () =>
-      document.body.removeEventListener("click", closeByClickOutside);
-  }, [isOpen]);
+    if (isOpen && onOpen) {
+      onOpen();
+    }
+  }, [isOpen, onOpen]);
 
   return (
     <div

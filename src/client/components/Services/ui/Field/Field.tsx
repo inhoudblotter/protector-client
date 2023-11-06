@@ -2,7 +2,7 @@ import { h } from "preact";
 import styles from "./Field.module.css";
 import { Input } from "src/client/shared/ui/Input";
 
-interface IField extends h.JSX.HTMLAttributes<HTMLInputElement> {
+export interface IField extends h.JSX.HTMLAttributes<HTMLInputElement> {
   title: string;
 }
 

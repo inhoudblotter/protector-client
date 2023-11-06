@@ -1,3 +1,12 @@
+.item {
+  position: relative;
+}
+
+.toast {
+  position: fixed;
+  bottom: 15px;
+  right: 15px;
+}
 .form {
   display: flex;
   justify-content: space-between;

@@ -14,3 +14,7 @@
   min-height: 100vh;
   min-width: 325px;
 }
+
+.stop-scroll {
+  overflow: hidden;
+}

@@ -1,0 +1,23 @@
+.container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--margin-block);
+  min-width: 355px;
+  min-height: 280px;
+}
+
+.text {
+  position: absolute;
+  top: 40%;
+  padding: inherit;
+  font: var(--font-text);
+  color: var(--color-text);
+  transform: translateY(-50%);
+}
+
+.btn {
+  margin-top: auto;
+  width: 100%;
+}
