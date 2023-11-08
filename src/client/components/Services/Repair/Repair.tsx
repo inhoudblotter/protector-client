@@ -91,7 +91,7 @@ export function Repair({ class: className }: IRepair) {
       checkoutProps={{
         carTypeProps: { setValue: onChangeCarType },
         radiusProps: { value: radius, onChange: onChangeRadius },
-        quantityProps: { value: quantity, onChange: onChangeRadius },
+        quantityProps: { value: quantity, onChange: onChangeQuantity },
         user,
         setUser,
         date,

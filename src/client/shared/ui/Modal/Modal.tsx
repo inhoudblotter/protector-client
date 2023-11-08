@@ -9,7 +9,12 @@ interface IModal extends h.JSX.HTMLAttributes<HTMLDivElement> {
   setClose?: boolean;
 }
 
-export function Modal({ onClose, children, setClose }: IModal) {
+export function Modal({
+  onClose,
+  children,
+  setClose,
+  class: className,
+}: IModal) {
   const { containerRef, backgroundRef, close } = useModal<
     HTMLDivElement,
     HTMLDivElement
@@ -21,7 +26,7 @@ export function Modal({ onClose, children, setClose }: IModal) {
 
   return (
     <div class={styles.background} ref={backgroundRef}>
-      <div class={styles.container} ref={containerRef}>
+      <div class={[styles.container, className].join(" ")} ref={containerRef}>
         <button
           class={styles.closeBtn}
           aria-label={"Закрыть"}

@@ -72,6 +72,7 @@ export function CheckoutForm({
             setUser(null);
             setModalOpen(false);
           }}
+          class={styles.modal}
         >
           {setDate && !date ? (
             <DatePicker setValue={setDate} />
