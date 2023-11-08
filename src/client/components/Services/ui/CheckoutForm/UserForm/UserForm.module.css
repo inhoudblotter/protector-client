@@ -20,3 +20,17 @@
   margin-top: auto;
   margin-bottom: var(--margin-block);
 }
+
+@media (max-width: 964px) {
+  .container {
+    min-width: 285px;
+    min-height: 210px;
+  }
+}
+
+@media (max-width: 650px) {
+  .container {
+    min-width: 185px;
+    min-height: 135px;
+  }
+}

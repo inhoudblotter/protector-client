@@ -5,7 +5,7 @@ import { CarType, ICarType } from "./CarType";
 import styles from "./CheckoutForm.module.css";
 import { Button } from "src/client/shared/ui/Button";
 import { DatePicker } from "src/client/shared/ui/DatePicker";
-import { UserForm } from "../UserForm";
+import { UserForm } from "./UserForm";
 import { Modal } from "src/client/shared/ui/Modal";
 import { OrderCreated } from "./OrderCreated";
 
@@ -66,7 +66,13 @@ export function CheckoutForm({
         {orderText}
       </Button>
       {isModalOpen && (
-        <Modal onClose={() => setModalOpen(false)}>
+        <Modal
+          onClose={() => {
+            if (setDate) setDate(null);
+            setUser(null);
+            setModalOpen(false);
+          }}
+        >
           {setDate && !date ? (
             <DatePicker setValue={setDate} />
           ) : !user ? (

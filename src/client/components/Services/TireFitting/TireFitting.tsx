@@ -5,7 +5,7 @@ import { ChangeEvent } from "preact/compat";
 import { Modal } from "src/client/shared/ui/Modal";
 import { DatePicker } from "src/client/shared/ui/DatePicker";
 import { OrderCreated } from "../ui/CheckoutForm/OrderCreated";
-import { UserForm } from "../ui/UserForm";
+import { UserForm } from "../ui/CheckoutForm/UserForm";
 import { formatTime } from "src/client/shared/utils/formatTime";
 import { useRadiusField } from "../hooks/useRadiusField";
 import { useQuantityField } from "../hooks/useQuantityField";
@@ -44,16 +44,14 @@ export function TireFitting({ class: className }: ITireFitting) {
     [setComplex, setRemovalAndInstalation]
   );
 
-  const onChangeOtherService = (setValue: (v: boolean) => void) =>
-    useCallback(
-      (e: ChangeEvent<HTMLInputElement>) => {
-        const checked = e.currentTarget.checked;
-        setValue(checked);
-        if (!checked) setComplex(false);
-      },
-      [setComplex, setValue]
-    );
-
+  const onChangeOtherService = useCallback(
+    (setValue: (v: boolean) => void) => (e: ChangeEvent<HTMLInputElement>) => {
+      const checked = e.currentTarget.checked;
+      setValue(checked);
+      if (!checked) setComplex(false);
+    },
+    [setComplex]
+  );
   function validateCheckoutForm() {
     setError(null);
     if (

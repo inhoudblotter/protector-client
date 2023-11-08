@@ -37,3 +37,15 @@
   color: var(--color-text);
   cursor: default;
 }
+
+@media (max-width: 964px) {
+  .btn {
+    padding: 10px;
+  }
+}
+
+@media (max-width: 650px) {
+  .btn {
+    padding: 5px;
+  }
+}

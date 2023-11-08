@@ -9,7 +9,7 @@
 
 .items {
   min-width: 355px;
-  height: 280px;
+  min-height: 280px;
 }
 
 .day {
@@ -17,4 +17,18 @@
   font: var(--font-text);
   color: var(--color-text);
   opacity: 0.7;
+}
+
+@media (max-width: 964px) {
+  .items {
+    min-width: 285px;
+    min-height: 210px;
+  }
+}
+
+@media (max-width: 650px) {
+  .items {
+    min-width: 185px;
+    min-height: 135px;
+  }
 }
