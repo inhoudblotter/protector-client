@@ -65,6 +65,7 @@ export function Header({
         class={[styles.action, styles.prev].join(" ")}
         onClick={type === "month" ? prevMonth : prevDay}
         disabled={isToday}
+        type={"button"}
       >
         <Arrow class={[styles.icon, styles.iconPrev].join(" ")} />
       </button>
@@ -72,6 +73,7 @@ export function Header({
         class={styles.date}
         disabled={type === "month"}
         onClick={cleanDate}
+        type={"button"}
       >
         {type === "month" ? month : date}
       </button>
