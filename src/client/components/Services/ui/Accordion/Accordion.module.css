@@ -1,3 +1,7 @@
+.container {
+  overflow: hidden;
+}
+
 .content {
   height: 0;
   overflow: hidden;

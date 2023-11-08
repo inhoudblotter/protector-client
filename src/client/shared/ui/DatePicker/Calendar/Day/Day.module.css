@@ -43,9 +43,3 @@
     padding: 10px;
   }
 }
-
-@media (max-width: 650px) {
-  .btn {
-    padding: 5px;
-  }
-}
