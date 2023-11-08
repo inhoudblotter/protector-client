@@ -80,6 +80,7 @@ export function Header({
       <button
         class={[styles.action, styles.next].join(" ")}
         onClick={type === "month" ? nextMonth : nextDay}
+        type={"button"}
       >
         <Arrow class={[styles.icon, styles.iconPrev].join(" ")} />
       </button>
