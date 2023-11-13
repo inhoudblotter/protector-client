@@ -7,7 +7,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin: 0 auto;
   padding: 25px var(--padding-container);
+  max-width: 1440px;
 }
 
 .copyright {

@@ -61,26 +61,24 @@ async function createServer() {
   const buildModule = isProd ? productionBuildPath : devBuildPath;
   const { render } = await vite.ssrLoadModule(buildModule);
 
-  app.use("/", async (req, res) => {
-    const url = req.originalUrl;
+  async function renderPage(url: string) {
     const template = await vite.transformIndexHtml(url, baseTemplate);
     const appHtml = await render({ url });
     const html = template
       .replace(`<!--app-html-->`, appHtml)
       .replace(`<!--head-->`, styles);
+    return html;
+  }
 
+  app.get("/", async (req, res) => {
+    const url = req.originalUrl;
+    const html = await renderPage(url);
     res.status(200).set({ "Content-Type": "text/html" }).end(html);
   });
 
-  app.use("*", async (req, res) => {
+  app.get("*", async (req, res) => {
     const url = req.originalUrl;
-    const template = await vite.transformIndexHtml(url, baseTemplate);
-    const appHtml = await render({ url });
-
-    const html = template
-      .replace(`<!--app-html-->`, appHtml)
-      .replace(`<!--head-->`, styles);
-
+    const html = await renderPage(url);
     res.status(404).set({ "Content-Type": "text/html" }).end(html);
   });
 

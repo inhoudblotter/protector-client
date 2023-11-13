@@ -6,6 +6,7 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 25px 50px;
+  margin: 0 auto;
   padding: 0 var(--padding-container);
   max-width: 1440px;
   height: fit-content;
