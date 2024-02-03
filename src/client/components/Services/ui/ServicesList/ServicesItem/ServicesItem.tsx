@@ -4,7 +4,7 @@ import styles from "./ServicesItem.module.css";
 
 export interface IServicesItem extends h.JSX.HTMLAttributes<HTMLInputElement> {
   title: string;
-  price: number;
+  price: string;
   checkbox?: boolean;
   lighten?: boolean;
 }

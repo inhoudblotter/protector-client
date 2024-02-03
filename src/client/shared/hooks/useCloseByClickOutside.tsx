@@ -1,52 +1,46 @@
-import { RefObject } from "preact";
-import { useCallback, useEffect } from "preact/hooks";
+import { useCallback, useId } from "preact/hooks";
 
-interface IUseCloseByClickOutside<Container extends HTMLElement> {
-  containerRef: RefObject<Container>;
-  closeFunction: () => void;
-  isOpen: boolean;
-  id: string;
-}
+export function useCloseByClickOutside<
+  Outside extends HTMLElement,
+  Inside extends HTMLElement
+>(
+  outsideRef: React.RefObject<Outside>,
+  insideRef: React.RefObject<Inside>,
+  closeFunction: () => void
+) {
+  const id = useId();
 
-export function useCloseByClickOutside<Container extends HTMLElement>({
-  containerRef,
-  closeFunction,
-  isOpen,
-  id,
-}: IUseCloseByClickOutside<Container>) {
-  const closeByClickOutside = useCallback(
-    (e: { _isContent?: string[] } & MouseEvent) => {
-      if (!e._isContent || !e._isContent.some((el) => el === id))
-        closeFunction();
-    },
-    [containerRef, closeFunction, id]
-  );
-
-  const setIsContent = useCallback(
-    (e: { _isContent?: string[] } & MouseEvent) => {
-      if (e._isContent) {
-        e._isContent.push(id);
-      } else e._isContent = [id];
+  const setIsInside = useCallback(
+    (e: { _isInside?: string[] } & MouseEvent) => {
+      if (!e._isInside) {
+        e._isInside = [id];
+      } else if (!e._isInside.includes(id)) {
+        e._isInside.push(id);
+      }
     },
     [id]
   );
 
-  useEffect(() => {
-    const container = containerRef.current;
-    if (container) {
-      if (isOpen) {
-        container.addEventListener("click", setIsContent);
-        document.body.addEventListener("click", closeByClickOutside);
-      } else {
-        container.removeEventListener("click", setIsContent);
-        document.body.removeEventListener("click", closeByClickOutside);
-      }
+  const closeByClickOutside = useCallback(
+    (e: { _isInside?: string[] } & MouseEvent) => {
+      if (!e._isInside || !e._isInside.includes(id)) closeFunction();
+    },
+    [id, closeFunction]
+  );
+
+  const onContentMount = useCallback(() => {
+    const inside = insideRef.current;
+    const outside = outsideRef.current;
+    if (inside && outside) {
+      inside.addEventListener("click", setIsInside);
+      outside.addEventListener("click", closeByClickOutside);
     }
     return () => {
-      if (container) {
-        container.removeEventListener("click", setIsContent);
-        document.body.addEventListener("click", closeByClickOutside);
+      if (inside && outside) {
+        inside.removeEventListener("click", setIsInside);
+        outside.removeEventListener("click", closeByClickOutside);
       }
     };
-  }, [containerRef, closeFunction, isOpen]);
+  }, [outsideRef, insideRef, closeByClickOutside, setIsInside]);
+  return { onContentMount, setIsInside };
 }

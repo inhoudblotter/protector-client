@@ -5,6 +5,7 @@ import styles from "./ServicesList.module.css";
 export interface IServicesList
   extends h.JSX.HTMLAttributes<HTMLFieldSetElement> {
   services: IServicesItem[];
+  
 }
 
 export function ServicesList({ services, class: className }: IServicesList) {

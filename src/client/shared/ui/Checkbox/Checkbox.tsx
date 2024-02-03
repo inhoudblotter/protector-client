@@ -20,7 +20,7 @@ export function Checkbox({
         lighten ? styles.lighten : undefined,
       ].join(" ")}
     >
-      <input class={styles.input} type="checkbox" id="complex" {...props} />
+      <input class={styles.input} type="checkbox" {...props} />
       <div class={styles.icon}></div>
       <h3 class={styles.label}>{title}</h3>
     </label>

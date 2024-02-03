@@ -2,6 +2,8 @@ import { h } from "preact";
 import { useEffect, useRef, useState, useCallback, useId } from "preact/hooks";
 import styles from "./Accordion.module.css";
 import { useCloseByClickOutside } from "src/client/shared/hooks/useCloseByClickOutside";
+import { useDropdown } from "src/client/shared/hooks/useDropdown";
+import { Content } from "./Content";
 
 interface IAccordion extends h.JSX.HTMLAttributes<HTMLDivElement> {
   title: string;
@@ -10,61 +12,25 @@ interface IAccordion extends h.JSX.HTMLAttributes<HTMLDivElement> {
 }
 
 export function Accordion({ title, children, onOpen, onClose }: IAccordion) {
-  const [isOpen, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const [windowWidth, setWindowWidth] = useState<number>();
-  const close = useCallback(() => {
-    setOpen(false);
-    if (onClose) onClose();
-  }, [onClose, setOpen]);
-
-  const handleResize = useCallback(() => {
-    setWindowWidth(window.innerWidth);
-  }, [setWindowWidth]);
-
-  const handleClick = useCallback(() => {
-    if (isOpen) {
-      close();
-    } else setOpen(true);
-  }, [isOpen, setOpen, close]);
-
-  useEffect(() => {
-    const content = contentRef.current;
-    if (content)
-      content.style.setProperty("--height", `${content.scrollHeight}px`);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [contentRef, windowWidth]);
-
-  const id = useId();
-
-  useCloseByClickOutside({
-    closeFunction: close,
-    containerRef: ref,
-    isOpen,
-    id,
-  });
-
-  useEffect(() => {
-    if (isOpen && onOpen) {
-      onOpen();
-    }
-  }, [isOpen, onOpen]);
+  const { dropdownRef, triggerRef, contentRef, onContentMount, isOpen } =
+    useDropdown<HTMLDivElement, HTMLButtonElement, HTMLDivElement>(styles.open);
 
   return (
-    <div
-      class={[styles.container, isOpen ? styles.open : undefined].join(" ")}
-      ref={ref}
-    >
-      <button class={styles.trigger} onClick={handleClick}>
+    <div class={styles.container} ref={dropdownRef}>
+      <button class={styles.trigger} ref={triggerRef}>
         <h3 class={styles.title}>{title}</h3>
         <span class={styles.line}></span>
         <span class={styles.arrow}></span>
       </button>
-      <div class={styles.content} ref={contentRef}>
-        {children}
-      </div>
+      {isOpen && (
+        <Content
+          onMount={onContentMount}
+          class={styles.content}
+          outerRef={contentRef}
+        >
+          {children}
+        </Content>
+      )}
     </div>
   );
 }

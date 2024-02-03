@@ -1,12 +1,25 @@
 import { h } from "preact";
 import styles from "./Button.module.css";
+import { Loader } from "../Loader";
+import { cn } from "../../utils/cn";
 
-interface IButton extends h.JSX.HTMLAttributes<HTMLButtonElement> {}
+interface IButton extends h.JSX.HTMLAttributes<HTMLButtonElement> {
+  isLoading?: boolean;
+}
 
-export function Button({ class: className, children, ...props }: IButton) {
+export function Button({
+  class: className,
+  children,
+  isLoading,
+  ...props
+}: IButton) {
   return (
-    <button class={[styles.btn, className].join(" ")} {...props}>
+    <button
+      class={cn(styles.btn, className, isLoading && styles.loading)}
+      {...props}
+    >
       {children}
+      {isLoading && <Loader class={styles.loader} />}
     </button>
   );
 }

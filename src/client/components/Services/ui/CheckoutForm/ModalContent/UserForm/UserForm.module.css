@@ -1,0 +1,28 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  padding: var(--margin-block);
+  margin: 0;
+  border: none;
+  flex-grow: 1;
+}
+
+.input {
+  margin-bottom: var(--margin-block);
+}
+
+.personalData {
+  font: var(--font-caption);
+  color: var(--color-text);
+}
+
+.btn {
+  margin-top: auto;
+  margin-bottom: var(--margin-block);
+}
+
+.toast {
+  position: fixed;
+  bottom: 15px;
+  right: 15px;
+}

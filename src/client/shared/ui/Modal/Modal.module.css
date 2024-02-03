@@ -25,6 +25,7 @@
   flex-direction: column;
   margin: auto;
   padding: var(--margin-block);
+  gap: var(--margin-block);
   border-radius: 25px;
   background-color: var(--color-bg-component);
   transform: translateY(-25px);
@@ -46,7 +47,9 @@
 }
 
 .content {
-  height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
 
 .closeIcon path {

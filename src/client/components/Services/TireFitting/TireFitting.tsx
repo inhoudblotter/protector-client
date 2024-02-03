@@ -1,15 +1,29 @@
 import { h } from "preact";
 import { GroupItem } from "../ui/GroupItem";
-import { useState, useCallback, useMemo } from "preact/hooks";
+import {
+  useState,
+  useCallback,
+  useMemo,
+  useEffect,
+  useContext,
+} from "preact/hooks";
 import { ChangeEvent } from "preact/compat";
 import { formatTime } from "src/client/shared/utils/formatTime";
 import { useRadiusField } from "../hooks/useRadiusField";
 import { useQuantityField } from "../hooks/useQuantityField";
 import { useCarTypeField } from "../hooks/useCarTypeFiled";
+import { createOrder } from "src/client/shared/api/createOrder";
+import { IClient } from "src/client/shared/types/IClient";
+import { settingsContext } from "src/client/shared/model/slices/settings";
+import { getDefaultPrice } from "../utils/getDefaultPrice";
+import { FormLoader } from "../ui/FormLoader/FormLoader";
+import { isError } from "src/client/shared/types/typeGuards/isError";
+import { IError } from "src/client/shared/types/IError";
 
 interface ITireFitting extends h.JSX.HTMLAttributes<HTMLLIElement> {}
 
 export function TireFitting({ class: className }: ITireFitting) {
+  const settings = useContext(settingsContext);
   const [complex, setComplex] = useState(true);
   const [removalAndInstalation, setRemovalAndInstalation] = useState(true);
   const [dismantling, setDismantling] = useState(true);
@@ -17,13 +31,30 @@ export function TireFitting({ class: className }: ITireFitting) {
   const [balancing, setBalancing] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [date, setDate] = useState<string | null>(null);
-  const [user, setUser] = useState<{ name: string; phone: string } | null>(
-    null
-  );
+  const [user, setUser] = useState<IClient | null>(null);
   const { radius, onChangeRadius } = useRadiusField();
   const { quantity, onChangeQuantity } = useQuantityField();
   const { carType, onChangeCarType } = useCarTypeField();
-
+  const [isSuccess, setSuccess] = useState(false);
+  const [errorOnSubmit, setErrorOnSubmit] = useState<IError | null>(null);
+  const [isLoading, setLoading] = useState(false);
+  const [services, setServices] = useState<string[]>([]);
+  useEffect(() => {
+    if (complex) {
+      setServices(["complex"]);
+    } else {
+      setServices(
+        Object.entries({
+          removalAndInstalation,
+          dismantling,
+          instalation,
+          balancing,
+        })
+          .filter((v) => v[1])
+          .map((v) => v[0])
+      );
+    }
+  }, [complex, dismantling, instalation, balancing, removalAndInstalation]);
   const onChangeComplex = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       const checked = e.currentTarget.checked;
@@ -48,6 +79,7 @@ export function TireFitting({ class: className }: ITireFitting) {
     },
     [setComplex]
   );
+
   function validateCheckoutForm() {
     setError(null);
     if (
@@ -69,7 +101,7 @@ export function TireFitting({ class: className }: ITireFitting) {
   }
 
   const checkoutDoneText = useMemo(() => {
-    if (!date) return "Что-то пошло не так...";
+    if (!date) return "";
     const temp = new Date(date);
     const [day, hours, minutes] = [
       temp.getDate(),
@@ -81,8 +113,55 @@ export function TireFitting({ class: className }: ITireFitting) {
     )}.`;
   }, [date]);
 
-  function onSubmit() {}
-
+  function onSubmit() {
+    if (user && date) {
+      setErrorOnSubmit(null);
+      setLoading(true);
+      let services;
+      if (complex) {
+        services = ["complex"];
+      } else {
+        services = Object.entries({
+          removalAndInstalation,
+          dismantling,
+          instalation,
+          balancing,
+        })
+          .filter((v) => v[1])
+          .map((v) => v[0]);
+      }
+      createOrder({
+        client: {
+          name: user.name,
+          phone: user.phone,
+          carNumber: user.carNumber,
+          carType: carType || undefined,
+        },
+        services,
+        date: date,
+        wheels: {
+          radius: radius,
+          quantity: quantity,
+        },
+      })
+        .then(() => {
+          setSuccess(true);
+        })
+        .catch((error) => {
+          if (isError(error)) {
+            setErrorOnSubmit(error);
+          } else {
+            setErrorOnSubmit({ code: 500, message: "Что-то пошло не так..." });
+            throw error;
+          }
+        })
+        .finally(() => setLoading(false));
+    }
+  }
+  useEffect(() => {
+    if (user) onSubmit();
+  }, [user]);
+  if (!settings) return <FormLoader title="Переобувка" />;
   return (
     <>
       <GroupItem
@@ -92,34 +171,59 @@ export function TireFitting({ class: className }: ITireFitting) {
           services: [
             {
               title: "Комплекс",
-              price: 0,
+              price: getDefaultPrice(
+                settings.services.complex.prices,
+                quantity,
+                carType,
+                radius
+              ),
               checked: complex,
               onChange: onChangeComplex,
             },
             {
               title: "Снятие и установка",
-              price: 0,
+              price: getDefaultPrice(
+                settings.services.removalAndInstalation.prices,
+                quantity,
+                carType,
+                radius
+              ),
               checked: removalAndInstalation,
               onChange: onChangeOtherService(setRemovalAndInstalation),
               lighten: complex,
             },
             {
               title: "Демонтаж",
-              price: 0,
+              price: getDefaultPrice(
+                settings.services.dismantling.prices,
+                quantity,
+                carType,
+                radius
+              ),
               checked: dismantling,
               onChange: onChangeOtherService(setDismantling),
               lighten: complex,
             },
             {
               title: "Монтаж",
-              price: 0,
+              price: getDefaultPrice(
+                settings.services.instalation.prices,
+                quantity,
+                carType,
+                radius
+              ),
               checked: instalation,
               onChange: onChangeOtherService(setInstalation),
               lighten: complex,
             },
             {
               title: "Балансировка",
-              price: 0,
+              price: getDefaultPrice(
+                settings.services.balancing.prices,
+                quantity,
+                carType,
+                radius
+              ),
               checked: balancing,
               onChange: onChangeOtherService(setBalancing),
               lighten: complex,
@@ -132,12 +236,19 @@ export function TireFitting({ class: className }: ITireFitting) {
           radiusProps: { value: radius, onChange: onChangeRadius },
           quantityProps: { value: quantity, onChange: onChangeQuantity },
           validateCheckoutForm,
-          onSubmit,
+          services,
+          wheels: quantity,
+          setErrorOnSubmit,
+          errorOnSubmit,
+          clearError: () => setErrorOnSubmit(null),
           date,
           setDate,
           user,
           setUser,
+          isSuccess,
           checkoutDoneText,
+          isLoading,
+          onSubmit,
         }}
       />
     </>

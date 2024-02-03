@@ -12,19 +12,19 @@
 
 .modal {
   width: 500px;
-  height: 520px;
+  min-height: 520px;
 }
 
 @media (max-width: 964px) {
   .modal {
     width: 345px;
-    height: 370px;
+    min-height: 370px;
   }
 }
 
 @media (max-width: 650px) {
   .modal {
     width: 285px;
-    height: 305px;
+    min-height: 305px;
   }
 }

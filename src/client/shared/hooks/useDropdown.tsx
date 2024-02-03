@@ -1,58 +1,97 @@
-import { useState, useRef, useCallback, useEffect, useId } from "preact/hooks";
+import { useRef, useState, useCallback, useEffect } from "preact/hooks";
 import { useCloseByClickOutside } from "./useCloseByClickOutside";
 
-interface IUseDropdown {
-  openClass: string;
-  onClose?: () => void;
-}
-
 export function useDropdown<
-  Container extends HTMLElement,
-  Trigger extends HTMLElement
->({ openClass, onClose }: IUseDropdown) {
-  const containerRef = useRef<Container>(null);
+  Dropdown extends HTMLElement,
+  Trigger extends HTMLElement,
+  Content extends HTMLElement
+>(
+  openClass: string,
+  onClose?: () => void
+): {
+  triggerRef: React.RefObject<Trigger>;
+  contentRef: React.RefObject<Content>;
+  dropdownRef: React.RefObject<Dropdown>;
+  isOpen: boolean;
+  open: () => void;
+  close: (callback?: () => void) => void;
+  onContentMount: () => () => void;
+  setIsInside: (
+    e: {
+      _isInside?: string[] | undefined;
+    } & MouseEvent
+  ) => void;
+} {
+  const dropdownRef = useRef<Dropdown>(null);
   const triggerRef = useRef<Trigger>(null);
+  const contentRef = useRef<Content>(null);
   const [isOpen, setOpen] = useState(false);
-  const id = useId();
 
-  const close = useCallback(() => {
-    const container = containerRef.current;
-    if (container) {
-      container.classList.remove(openClass);
-      container.addEventListener(
-        "transitionend",
-        () => {
-          setOpen(false);
-          if (onClose) onClose();
-        },
-        { once: true }
-      );
-    }
-  }, [containerRef, setOpen, onClose]);
+  const close = useCallback(
+    (callback: () => void = () => {}) => {
+      const el = dropdownRef.current;
+      if (el) {
+        el.classList.remove(openClass);
+        el.addEventListener(
+          "transitionend",
+          () => {
+            setOpen(false);
+            if (onClose) onClose();
+            callback();
+          },
+          { once: true }
+        );
+      }
+    },
+    [dropdownRef, setOpen, onClose, openClass]
+  );
 
   const open = useCallback(() => {
-    const container = containerRef.current;
-    if (container) {
-      container.classList.add(openClass);
-      setOpen(true);
+    setOpen(true);
+  }, [setOpen]);
+
+  const outsideRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (!outsideRef.current)
+      outsideRef.current = document.getElementById("root");
+  }, [outsideRef]);
+
+  const { onContentMount: closeByClickOutside, setIsInside } =
+    useCloseByClickOutside(outsideRef, dropdownRef, close);
+
+  const onContentMount = useCallback(() => {
+    const el = dropdownRef.current;
+    if (el) {
+      window.requestAnimationFrame(() => {
+        el.classList.add(openClass);
+      });
     }
-  }, [containerRef, openClass]);
-  useCloseByClickOutside({
-    closeFunction: close,
-    containerRef,
-    isOpen,
-    id,
-  });
+    return closeByClickOutside();
+  }, [dropdownRef, openClass, closeByClickOutside]);
+
+  const switchState = useCallback(() => {
+    if (isOpen) {
+      close();
+    } else open();
+  }, [isOpen, close, open]);
+
   useEffect(() => {
     const trigger = triggerRef.current;
-    if (trigger) {
-      trigger.addEventListener("click", open);
-    }
+    if (trigger) trigger.addEventListener("click", switchState);
     return () => {
-      if (trigger) {
-        trigger.removeEventListener("click", open);
-      }
+      if (trigger) trigger.removeEventListener("click", switchState);
     };
-  }, [containerRef]);
-  return { containerRef, triggerRef, isOpen, open, close, setOpen };
+  }, [triggerRef, switchState]);
+
+  return {
+    triggerRef,
+    contentRef,
+    dropdownRef,
+    isOpen,
+    open,
+    close,
+    onContentMount,
+    setIsInside,
+  };
 }

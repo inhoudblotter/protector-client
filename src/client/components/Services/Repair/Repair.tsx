@@ -1,15 +1,30 @@
 import { h } from "preact";
-import { useState, useCallback, useMemo } from "preact/hooks";
+import {
+  useState,
+  useCallback,
+  useMemo,
+  useEffect,
+  useContext,
+} from "preact/hooks";
 import { GroupItem } from "../ui/GroupItem";
 import { ChangeEvent } from "preact/compat";
 import { useCarTypeField } from "../hooks/useCarTypeFiled";
 import { useQuantityField } from "../hooks/useQuantityField";
 import { useRadiusField } from "../hooks/useRadiusField";
 import { formatTime } from "src/client/shared/utils/formatTime";
+import { IClient } from "src/client/shared/types/IClient";
+import { createOrder } from "src/client/shared/api/createOrder";
+import { settingsContext } from "src/client/shared/model/slices/settings";
+import { FormLoader } from "../ui/FormLoader/FormLoader";
+import { getMinMaxPrice } from "../utils/getMinMaxPrice";
+import { getDefaultPrice } from "../utils/getDefaultPrice";
+import { IError } from "src/client/shared/types/IError";
+import { isError } from "src/client/shared/types/typeGuards/isError";
 
 interface IRepair extends h.JSX.HTMLAttributes<HTMLLIElement> {}
 
 export function Repair({ class: className }: IRepair) {
+  const settings = useContext(settingsContext);
   const [addSpikes, setAddSpikes] = useState(false);
   const [cut, setCut] = useState(false);
   const [puncture, setPuncture] = useState(false);
@@ -18,11 +33,12 @@ export function Repair({ class: className }: IRepair) {
   const { quantity, onChangeQuantity } = useQuantityField(1);
   const { radius, onChangeRadius } = useRadiusField();
   const [date, setDate] = useState<string | null>(null);
-  const [user, setUser] = useState<{ name: string; phone: string } | null>(
-    null
-  );
+  const [user, setUser] = useState<IClient | null>(null);
   const [error, setError] = useState<string | null>(null);
-
+  const [errorOnSubmit, setErrorOnSubmit] = useState<IError | null>(null);
+  const [isLoading, setLoading] = useState(false);
+  const [isSuccess, setSuccess] = useState(false);
+  const [services, setServices] = useState<string[]>([]);
   const onChange = (setValue: (v: boolean) => void) =>
     useCallback(
       (e: ChangeEvent<HTMLInputElement>) => {
@@ -53,8 +69,54 @@ export function Repair({ class: className }: IRepair) {
       minutes
     )}.`;
   }, [date]);
-
-  function onSubmit() {}
+  useEffect(() => {
+    setServices(
+      Object.entries({
+        addSpikes,
+        cut,
+        puncture,
+        removalAndInstalation,
+      })
+        .filter((v) => v[1])
+        .map((v) => v[0])
+    );
+  }, [addSpikes, cut, puncture, removalAndInstalation]);
+  function onSubmit() {
+    if (user && date && carType) {
+      createOrder({
+        client: {
+          name: user.name,
+          phone: user.phone,
+          carNumber: user.carNumber,
+          carType: carType,
+        },
+        services,
+        date: date,
+        wheels: {
+          radius,
+          quantity,
+        },
+      })
+        .then((id) => {
+          if (id) {
+            setSuccess(true);
+          } else throw new Error("Failed to create record.");
+        })
+        .catch((error) => {
+          if (isError(error)) {
+            setErrorOnSubmit(error);
+          } else {
+            setErrorOnSubmit({ code: 500, message: "Что-то пошло не так..." });
+            throw error;
+          }
+        })
+        .finally(() => setLoading(false));
+    }
+  }
+  useEffect(() => {
+    if (user) onSubmit();
+  }, [user]);
+  if (!settings) return <FormLoader title="Ремонт" />;
   return (
     <GroupItem
       title="Ремонт"
@@ -63,25 +125,45 @@ export function Repair({ class: className }: IRepair) {
         services: [
           {
             title: "Дошиповка",
-            price: 0,
+            price: getMinMaxPrice(
+              settings.services.addSpikes.prices,
+              quantity,
+              carType,
+              radius
+            ),
             checked: addSpikes,
             onChange: onChange(setAddSpikes),
           },
           {
             title: "Ремонт пореза",
-            price: 0,
+            price: getDefaultPrice(
+              settings.services.cut.prices,
+              quantity,
+              carType,
+              radius
+            ),
             checked: cut,
             onChange: onChange(setCut),
           },
           {
             title: "Ремонт прокола",
-            price: 0,
+            price: getDefaultPrice(
+              settings.services.puncture.prices,
+              quantity,
+              carType,
+              radius
+            ),
             checked: puncture,
             onChange: onChange(setPuncture),
           },
           {
             title: "Монтаж и демонтаж",
-            price: 0,
+            price: getDefaultPrice(
+              settings.services.removalAndInstalation.prices,
+              quantity,
+              carType,
+              radius
+            ),
             checked: removalAndInstalation,
             onChange: onChange(setRemovalAndInstalation),
           },
@@ -94,6 +176,13 @@ export function Repair({ class: className }: IRepair) {
         quantityProps: { value: quantity, onChange: onChangeQuantity },
         user,
         setUser,
+        setErrorOnSubmit,
+        errorOnSubmit,
+        clearError: () => setErrorOnSubmit(null),
+        isLoading,
+        isSuccess,
+        services,
+        wheels: quantity,
         date,
         setDate,
         validateCheckoutForm,

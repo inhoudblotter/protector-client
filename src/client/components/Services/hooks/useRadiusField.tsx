@@ -5,7 +5,14 @@ export function useRadiusField() {
   const [radius, setRadius] = useState(14);
   const onChangeRadius = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
-      setRadius(Number(e.currentTarget.value));
+      const v = Number(e.currentTarget.value);
+      if (isNaN(v)) {
+        setRadius(12);
+      } else if (v < 12) {
+        setRadius(12);
+      } else if (v > 23) {
+        setRadius(23);
+      } else setRadius(v);
     },
     [setRadius]
   );
