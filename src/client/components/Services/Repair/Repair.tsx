@@ -21,7 +21,7 @@ import { getDefaultPrice } from "../utils/getDefaultPrice";
 import { IError } from "src/client/shared/types/IError";
 import { isError } from "src/client/shared/types/typeGuards/isError";
 
-interface IRepair extends h.JSX.HTMLAttributes<HTMLLIElement> {}
+type IRepair = h.JSX.HTMLAttributes<HTMLLIElement>;
 
 export function Repair({ class: className }: IRepair) {
   const settings = useContext(settingsContext);
@@ -39,13 +39,12 @@ export function Repair({ class: className }: IRepair) {
   const [isLoading, setLoading] = useState(false);
   const [isSuccess, setSuccess] = useState(false);
   const [services, setServices] = useState<string[]>([]);
-  const onChange = (setValue: (v: boolean) => void) =>
-    useCallback(
-      (e: ChangeEvent<HTMLInputElement>) => {
-        setValue(e.currentTarget.checked);
-      },
-      [setValue]
-    );
+  const onChange = useCallback(
+    (setValue: (v: boolean) => void) => (e: ChangeEvent<HTMLInputElement>) => {
+      setValue(e.currentTarget.checked);
+    },
+    []
+  );
 
   function validateCheckoutForm() {
     if ([addSpikes, puncture, cut, removalAndInstalation].every((el) => !el)) {
@@ -54,7 +53,8 @@ export function Repair({ class: className }: IRepair) {
     } else if ([carType, radius].some((el) => !el)) {
       setError("Заполните данные о машине");
       return false;
-    } else return true;
+    }
+    return true;
   }
 
   const checkoutDoneText = useMemo(() => {
@@ -81,17 +81,15 @@ export function Repair({ class: className }: IRepair) {
         .map((v) => v[0])
     );
   }, [addSpikes, cut, puncture, removalAndInstalation]);
-  function onSubmit() {
+  const onSubmit = useCallback(() => {
     if (user && date && carType) {
       createOrder({
         client: {
-          name: user.name,
-          phone: user.phone,
-          carNumber: user.carNumber,
-          carType: carType,
+          ...user,
+          carType,
         },
         services,
-        date: date,
+        date,
         wheels: {
           radius,
           quantity,
@@ -112,10 +110,20 @@ export function Repair({ class: className }: IRepair) {
         })
         .finally(() => setLoading(false));
     }
-  }
+  }, [
+    user,
+    carType,
+    services,
+    date,
+    radius,
+    quantity,
+    setSuccess,
+    setLoading,
+    setErrorOnSubmit,
+  ]);
   useEffect(() => {
     if (user) onSubmit();
-  }, [user]);
+  }, [user, onSubmit]);
   if (!settings) return <FormLoader title="Ремонт" />;
   return (
     <GroupItem

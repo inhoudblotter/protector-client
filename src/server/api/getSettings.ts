@@ -1,11 +1,13 @@
 import "dotenv/config";
+import { ISettings } from "src/client/shared/types/ISettings";
 
 export async function getSettings() {
-  const res = await fetch(process.env.VITE_API_HOST + "/settings", {
+  const res = await fetch(`${process.env.VITE_API_HOST}/settings`, {
     mode: "cors",
   });
-  const data = (await res.json()) as {};
+  const data = (await res.json()) as ISettings;
   if (res.ok) {
     return data;
-  } else throw data;
+  }
+  throw data;
 }

@@ -20,7 +20,7 @@ import { FormLoader } from "../ui/FormLoader/FormLoader";
 import { isError } from "src/client/shared/types/typeGuards/isError";
 import { IError } from "src/client/shared/types/IError";
 
-interface ITireFitting extends h.JSX.HTMLAttributes<HTMLLIElement> {}
+type ITireFitting = h.JSX.HTMLAttributes<HTMLLIElement>;
 
 export function TireFitting({ class: className }: ITireFitting) {
   const settings = useContext(settingsContext);
@@ -113,7 +113,7 @@ export function TireFitting({ class: className }: ITireFitting) {
     )}.`;
   }, [date]);
 
-  function onSubmit() {
+  const onSubmit = useCallback(() => {
     if (user && date) {
       setErrorOnSubmit(null);
       setLoading(true);
@@ -132,16 +132,14 @@ export function TireFitting({ class: className }: ITireFitting) {
       }
       createOrder({
         client: {
-          name: user.name,
-          phone: user.phone,
-          carNumber: user.carNumber,
+          ...user,
           carType: carType || undefined,
         },
         services,
-        date: date,
+        date,
         wheels: {
-          radius: radius,
-          quantity: quantity,
+          radius,
+          quantity,
         },
       })
         .then(() => {
@@ -157,10 +155,23 @@ export function TireFitting({ class: className }: ITireFitting) {
         })
         .finally(() => setLoading(false));
     }
-  }
+  }, [
+    user,
+    complex,
+    removalAndInstalation,
+    dismantling,
+    instalation,
+    balancing,
+    date,
+    carType,
+    radius,
+    quantity,
+    setSuccess,
+    setErrorOnSubmit,
+  ]);
   useEffect(() => {
     if (user) onSubmit();
-  }, [user]);
+  }, [user, onSubmit]);
   if (!settings) return <FormLoader title="Переобувка" />;
   return (
     <>

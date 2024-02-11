@@ -22,7 +22,7 @@ export function Modal({
 
   useEffect(() => {
     if (setClose) close();
-  }, [setClose]);
+  }, [setClose, close]);
 
   return (
     <div class={styles.background} ref={backgroundRef}>

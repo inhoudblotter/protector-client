@@ -6,7 +6,7 @@ interface IDay extends h.JSX.HTMLAttributes<HTMLLIElement> {
   date: number;
   iso: string;
   free: boolean;
-  disabled: false;
+  disabled: boolean;
   setDate: (v: string) => void;
 }
 

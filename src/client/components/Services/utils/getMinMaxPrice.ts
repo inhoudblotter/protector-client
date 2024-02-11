@@ -31,7 +31,6 @@ export function getMinMaxPrice(
     return `от ${prices[carType][radius].min * wheels} до ${
       prices[carType][radius].max * wheels
     }`;
-  } else {
-    return `от ${prices.passengerCar[12].min} до ${prices.suv[21].max}`;
   }
+  return `от ${prices.passengerCar[12].min} до ${prices.suv[21].max}`;
 }

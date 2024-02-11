@@ -1,4 +1,4 @@
-export function createContext(state: { [key: string]: any }) {
+export function createContext(state: { [key: string]: object }) {
   if (!Object.keys(state).length) return "";
   let result = "<script>";
   for (const [k, v] of Object.entries(state)) {

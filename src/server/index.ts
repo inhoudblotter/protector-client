@@ -63,7 +63,10 @@ async function createServer() {
   const buildModule = isProd ? productionBuildPath : devBuildPath;
   const { render } = await vite.ssrLoadModule(buildModule);
 
-  async function renderPage(url: string, context: { [key: string]: any } = {}) {
+  async function renderPage(
+    url: string,
+    context: { [key: string]: object } = {}
+  ) {
     const template = await vite.transformIndexHtml(url, baseTemplate);
     const appHtml = await render({ url, context });
     const contextString = createContext(context);
@@ -86,7 +89,7 @@ async function createServer() {
     }
   });
 
-  app.get("/server-error", async (req, res) => {
+  app.get("/server-error", async (_, res) => {
     const html = await renderPage("/server-error");
     res.status(404).set({ "Content-Type": "text/html" }).end(html);
   });

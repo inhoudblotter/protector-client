@@ -26,10 +26,9 @@ export function ErrorOnSubmit({ error, clearError }: IErrorOnSubmit) {
           Повторите попытку или запишитесь по телефону.
         </span>
       );
-    } else {
-      return null;
     }
-  }, [error.code]);
+    return null;
+  }, [error.code, settings]);
   return (
     <div class={styles.container}>
       <span class={styles.text}>{error.message}</span>

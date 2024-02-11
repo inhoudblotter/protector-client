@@ -26,7 +26,7 @@ export function CluesProvider({ children }: IProvider) {
     if (state) setValue(JSON.parse(state));
   }, [setValue]);
   return (
-    <CluesContext.Provider value={{ value: value, setValue: setValue }}>
+    <CluesContext.Provider value={{ value, setValue }}>
       {children}
     </CluesContext.Provider>
   );

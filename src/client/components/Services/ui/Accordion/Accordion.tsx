@@ -1,7 +1,5 @@
 import { h } from "preact";
-import { useEffect, useRef, useState, useCallback, useId } from "preact/hooks";
 import styles from "./Accordion.module.css";
-import { useCloseByClickOutside } from "src/client/shared/hooks/useCloseByClickOutside";
 import { useDropdown } from "src/client/shared/hooks/useDropdown";
 import { Content } from "./Content";
 
@@ -11,20 +9,26 @@ interface IAccordion extends h.JSX.HTMLAttributes<HTMLDivElement> {
   onClose?: () => void;
 }
 
-export function Accordion({ title, children, onOpen, onClose }: IAccordion) {
+export function Accordion({ title, children, onClose, onOpen }: IAccordion) {
   const { dropdownRef, triggerRef, contentRef, onContentMount, isOpen } =
-    useDropdown<HTMLDivElement, HTMLButtonElement, HTMLDivElement>(styles.open);
+    useDropdown<HTMLDivElement, HTMLButtonElement, HTMLDivElement>(
+      styles.open,
+      onClose
+    );
 
   return (
     <div class={styles.container} ref={dropdownRef}>
       <button class={styles.trigger} ref={triggerRef}>
         <h3 class={styles.title}>{title}</h3>
-        <span class={styles.line}></span>
-        <span class={styles.arrow}></span>
+        <span class={styles.line} />
+        <span class={styles.arrow} />
       </button>
       {isOpen && (
         <Content
-          onMount={onContentMount}
+          onMount={() => {
+            if (onOpen) onOpen();
+            return onContentMount();
+          }}
           class={styles.content}
           outerRef={contentRef}
         >

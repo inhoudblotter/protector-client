@@ -1,7 +1,5 @@
 import { h } from "preact";
 import { RefObject, useCallback, useEffect } from "preact/compat";
-import styles from "./Content.module.css";
-import { cn } from "src/client/shared/utils/cn";
 interface IContent extends h.JSX.HTMLAttributes<HTMLDivElement> {
   outerRef: RefObject<HTMLDivElement>;
   onMount: () => void;
@@ -22,13 +20,13 @@ export function Content({
     if (content) {
       content.style.setProperty("--height", `${content.scrollHeight + 3}px`);
     }
-  }, []);
+  }, [outerRef]);
 
   useEffect(() => {
     setSize();
     window.addEventListener("resize", setSize);
     return () => window.removeEventListener("resize", setSize);
-  }, [outerRef]);
+  }, [outerRef, setSize]);
   return (
     <div class={className} ref={outerRef}>
       {children}

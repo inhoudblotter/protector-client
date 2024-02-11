@@ -4,7 +4,7 @@ import { formatPhone } from "src/client/shared/utils/formatPhone";
 import { useContext } from "preact/hooks";
 import { settingsContext } from "src/client/shared/model/slices/settings";
 
-interface IHeader extends h.JSX.HTMLAttributes<HTMLElement> {}
+type IHeader = h.JSX.HTMLAttributes<HTMLElement>;
 
 export function Header({ ...props }: IHeader) {
   const settings = useContext(settingsContext);
@@ -23,7 +23,7 @@ export function Header({ ...props }: IHeader) {
               {formatPhone(settings.phone)}
             </a>
           ) : (
-            <div class={styles.phoneLoader}></div>
+            <div class={styles.phoneLoader} />
           )}
         </div>
       </div>

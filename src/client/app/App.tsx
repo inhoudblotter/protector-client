@@ -1,9 +1,8 @@
-import { Router, Route } from "preact-router";
-import { Home } from "../pages/Home";
-import { NotFound } from "../pages/NotFound";
+import { Router } from "preact-router";
 import "./styles/globals.css";
 import { AppProvider } from "../shared/model/context";
 import { ISettings } from "../shared/types/ISettings";
+import AsyncRoute from "preact-async-route";
 
 export function App({
   url,
@@ -18,8 +17,21 @@ export function App({
   return (
     <AppProvider settings={context}>
       <Router url={url} static={server}>
-        <Route path="/" component={() => <Home />} />
-        <Route path="*" default component={() => <NotFound />} />
+        <AsyncRoute
+          path="/"
+          getComponent={() =>
+            import("../pages/Home/Home").then((module) => module.default)
+          }
+        />
+        <AsyncRoute
+          path="*"
+          default
+          component={() =>
+            import("../pages/NotFound/NotFound").then(
+              (module) => module.default
+            )
+          }
+        />
       </Router>
     </AppProvider>
   );

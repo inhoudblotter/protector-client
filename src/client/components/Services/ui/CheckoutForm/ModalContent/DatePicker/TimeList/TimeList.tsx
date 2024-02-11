@@ -35,7 +35,7 @@ export function TimeList({
           throw error;
         }
       });
-  }, [setFreeTime, services, wheels]);
+  }, [setFreeTime, services, wheels, date, setError]);
   return (
     <ul class={styles.container}>
       {freeTime === null ? (

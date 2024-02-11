@@ -1,5 +1,11 @@
 import { h } from "preact";
-import { useContext, useEffect, useMemo, useState } from "preact/hooks";
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "preact/hooks";
 import { GroupItem } from "../ui/GroupItem";
 import { useQuantityField } from "../hooks/useQuantityField";
 import { useRadiusField } from "../hooks/useRadiusField";
@@ -11,7 +17,7 @@ import { IPrice } from "src/client/shared/types/IPrices";
 import { isError } from "src/client/shared/types/typeGuards/isError";
 import { IError } from "src/client/shared/types/IError";
 
-interface IStorage extends h.JSX.HTMLAttributes<HTMLLIElement> {}
+type IStorage = h.JSX.HTMLAttributes<HTMLLIElement>;
 
 function getPrice(prices: IPrice, wheels: number, radius: number) {
   if (wheels && !radius) {
@@ -20,9 +26,8 @@ function getPrice(prices: IPrice, wheels: number, radius: number) {
     return `${prices[radius]}`;
   } else if (wheels && radius) {
     return `${prices[radius] * wheels}`;
-  } else {
-    return `от ${prices[12]} до ${prices[21]}`;
   }
+  return `от ${prices[12]} до ${prices[21]}`;
 }
 
 export function Storage({ class: className }: IStorage) {
@@ -56,7 +61,7 @@ export function Storage({ class: className }: IStorage) {
     return true;
   }
 
-  function onSubmit() {
+  const onSubmit = useCallback(() => {
     if (!user) return;
     setErrorOnSubmit(null);
     setLoading(true);
@@ -85,7 +90,7 @@ export function Storage({ class: className }: IStorage) {
         }
       })
       .finally(() => setLoading(false));
-  }
+  }, [user, setErrorOnSubmit, setLoading, quantity, radius, setSuccess]);
 
   useEffect(() => {
     if (user) onSubmit();

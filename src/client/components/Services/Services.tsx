@@ -4,7 +4,7 @@ import { Storage } from "./Storage";
 import styles from "./Services.module.css";
 import { h } from "preact";
 
-interface IServices extends h.JSX.HTMLAttributes<HTMLElement> {}
+type IServices = h.JSX.HTMLAttributes<HTMLElement>;
 
 export function Services({ ...props }: IServices) {
   return (

@@ -22,7 +22,7 @@ export function ServicesItem({
       ) : (
         <h3 class={styles.title}>{title}</h3>
       )}
-      <div class={styles.sep}></div>
+      <div class={styles.sep} />
       <span class={styles.price}>{price} &#8381;</span>
     </li>
   );

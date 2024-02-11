@@ -23,7 +23,6 @@ export function getDefaultPrice(
     return `от ${prices[carType][12] * wheels}`;
   } else if (wheels && radius && carType) {
     return (prices[carType][radius] * wheels).toString();
-  } else {
-    return `от ${prices.passengerCar[12]}`;
   }
+  return `от ${prices.passengerCar[12]}`;
 }

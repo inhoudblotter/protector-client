@@ -1,5 +1,5 @@
 import { h } from "preact";
-import { useContext, useEffect, useState } from "preact/hooks";
+import { useEffect, useState } from "preact/hooks";
 import styles from "./Calendar.module.css";
 import { Day } from "./Day";
 import { cn } from "src/client/shared/utils/cn";
@@ -35,7 +35,7 @@ export function Calendar({
           setError(error);
         } else throw error;
       });
-  }, [month, services, wheels]);
+  }, [month, services, wheels, setError]);
   return (
     <div class={cn(styles.container, className)}>
       <ul class={styles.header}>

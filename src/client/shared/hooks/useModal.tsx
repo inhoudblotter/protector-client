@@ -1,4 +1,4 @@
-import { useCallback, useRef, useEffect, useState, useId } from "preact/hooks";
+import { useCallback, useRef, useEffect, useState } from "preact/hooks";
 import { useCloseByClickOutside } from "./useCloseByClickOutside";
 
 interface IUseModal {
@@ -13,7 +13,6 @@ export function useModal<
   const backgroundRef = useRef<Background>(null);
   const containerRef = useRef<Container>(null);
   const [isOpen, setOpen] = useState(false);
-  const id = useId();
 
   const open = useCallback(() => {
     const bg = backgroundRef.current;
@@ -36,22 +35,23 @@ export function useModal<
         { once: true }
       );
     }
-  }, [backgroundRef, onClose, setOpen]);
+  }, [backgroundRef, onClose, setOpen, openStyle]);
 
-  useCloseByClickOutside({
-    closeFunction: close,
+  const { onContentMount } = useCloseByClickOutside(
+    backgroundRef,
     containerRef,
-    isOpen,
-    id,
-  });
+    close
+  );
 
   useEffect(() => {
     open();
     document.body.classList.add("stop-scroll");
+    const onClose = onContentMount();
     return () => {
       document.body.classList.remove("stop-scroll");
+      onClose();
     };
-  }, [open]);
+  }, [open, onContentMount]);
 
   return { containerRef, backgroundRef, open, close, isOpen };
 }

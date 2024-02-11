@@ -33,7 +33,7 @@ export function Map({ cordinates, class: className }: IMap) {
     const dot = new ymaps.Placemark(cordinates, {});
 
     map.geoObjects.add(dot);
-  }, [ref]);
+  }, [ref, cordinates]);
 
   useEffect(() => {
     let script = document.head.querySelector<HTMLScriptElement>("#ymaps");
@@ -52,7 +52,7 @@ export function Map({ cordinates, class: className }: IMap) {
       const script = document.head.querySelector("#ymaps");
       if (script) script.remove();
     };
-  }, [ref]);
+  }, [ref, createMap]);
 
-  return <div class={[styles.container, className].join(" ")} ref={ref}></div>;
+  return <div class={[styles.container, className].join(" ")} ref={ref} />;
 }

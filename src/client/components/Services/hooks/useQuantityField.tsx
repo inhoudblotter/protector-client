@@ -1,7 +1,7 @@
 import { ChangeEvent } from "preact/compat";
 import { useCallback, useState } from "preact/hooks";
 
-export function useQuantityField(defaultState: number = 4) {
+export function useQuantityField(defaultState = 4) {
   const [quantity, setQuantity] = useState(defaultState);
   const onChangeQuantity = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
