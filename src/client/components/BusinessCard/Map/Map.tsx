@@ -2,6 +2,7 @@ import { h } from "preact";
 import { useCallback, useEffect, useRef } from "preact/hooks";
 import styles from "./Map.module.css";
 import type maps from "yandex-maps";
+import { cn } from "src/client/shared/utils/cn";
 
 declare const ymaps: typeof maps;
 
@@ -54,5 +55,5 @@ export function Map({ cordinates, class: className }: IMap) {
     };
   }, [ref, createMap]);
 
-  return <div class={[styles.container, className].join(" ")} ref={ref} />;
+  return <div class={cn(styles.container, className)} ref={ref} />;
 }

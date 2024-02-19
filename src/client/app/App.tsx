@@ -1,9 +1,9 @@
-import { Router } from "preact-router";
+import { Route, Router } from "preact-router";
 import "./styles/globals.css";
 import { AppProvider } from "../shared/model/context";
 import { ISettings } from "../shared/types/ISettings";
 import AsyncRoute from "preact-async-route";
-
+import Home from "../pages/Home/Home";
 export function App({
   url,
   server,
@@ -11,22 +11,34 @@ export function App({
 }: {
   url?: string;
   server?: boolean;
-  context?: ISettings;
+  context?: { settings?: ISettings };
 }) {
-  if (!server) context = window.__settings__;
+  if (!server) context = { settings: window.__settings__ };
   return (
-    <AppProvider settings={context}>
+    <AppProvider settings={context?.settings}>
       <Router url={url} static={server}>
+        <Route path="/" component={Home} />
         <AsyncRoute
-          path="/"
+          path="/personal-data-terms"
           getComponent={() =>
-            import("../pages/Home/Home").then((module) => module.default)
+            import("../pages/PersonalDataTerms/PersonalDataTerms").then(
+              (module) => module.default
+            )
+          }
+        />
+
+        <AsyncRoute
+          path="/server-error"
+          getComponent={() =>
+            import("../pages/ServerError/ServerError").then(
+              (module) => module.default
+            )
           }
         />
         <AsyncRoute
           path="*"
           default
-          component={() =>
+          getComponent={() =>
             import("../pages/NotFound/NotFound").then(
               (module) => module.default
             )

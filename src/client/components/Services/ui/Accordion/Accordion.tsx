@@ -19,7 +19,7 @@ export function Accordion({ title, children, onClose, onOpen }: IAccordion) {
   return (
     <div class={styles.container} ref={dropdownRef}>
       <button class={styles.trigger} ref={triggerRef}>
-        <h3 class={styles.title}>{title}</h3>
+        <h2 class={styles.title}>{title}</h2>
         <span class={styles.line} />
         <span class={styles.arrow} />
       </button>

@@ -20,8 +20,7 @@ export function SettingsProvider({
     if (!settings)
       getSettings()
         .then((data) => setSettings(data))
-        .catch((error) => {
-          console.error(error);
+        .catch(() => {
           route("/server-error", true);
         });
   }, [settings]);

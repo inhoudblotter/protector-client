@@ -5,6 +5,7 @@ import { useState, useEffect, StateUpdater } from "preact/hooks";
 import { Calendar } from "./Calendar";
 import { TimeList } from "./TimeList";
 import { IError } from "src/client/shared/types/IError";
+import { cn } from "src/client/shared/utils/cn";
 
 interface IDatePicker extends h.JSX.HTMLAttributes<HTMLDivElement> {
   services: string[];
@@ -28,7 +29,7 @@ export function DatePicker({
     if (time !== null) setValue(time);
   }, [time, setValue]);
   return (
-    <div class={[styles.container, className].join(" ")}>
+    <div class={cn(styles.container, className)}>
       <Header
         type={!date ? "month" : "day"}
         value={!date ? month : date}

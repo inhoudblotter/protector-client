@@ -4,8 +4,11 @@ import { fileURLToPath } from "url";
 import express from "express";
 import compression from "compression";
 import { createServer as createViteServer } from "vite";
-import { createContext } from "./utils/createContext";
-import { getSettings } from "./api/getSettings";
+import { renderPage } from "./middlewares/renderPage";
+import router from "./routes";
+
+import "dotenv/config";
+import { IRender } from "./types/IRender";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const isTest = process.env.NODE_ENV === "test" || !!process.env.VITE_TEST_BUILD;
@@ -46,7 +49,11 @@ async function createServer() {
 
   app.use(vite.middlewares);
 
-  app.use(express.static(resolve("public")));
+  app.use(
+    express.static(isProd ? resolve("../public") : resolve("../../public"))
+  );
+
+  app.use(cookieParser(process.env.SECRET));
 
   if (isProd) {
     app.use(compression());
@@ -56,54 +63,23 @@ async function createServer() {
     isProd ? resolve("./index.html") : resolve("../../index.html"),
     "utf-8"
   );
-  const styles = await getStyles();
 
+  const styles = await getStyles();
   const productionBuildPath = path.join(__dirname, "./entry.server.js");
   const devBuildPath = path.join(__dirname, "../client/app/entry.server.tsx");
   const buildModule = isProd ? productionBuildPath : devBuildPath;
-  const { render } = await vite.ssrLoadModule(buildModule);
+  const { render } = (await vite.ssrLoadModule(buildModule)) as {
+    render: IRender;
+  };
+  app.use(renderPage(vite, baseTemplate, render, styles));
 
-  async function renderPage(
-    url: string,
-    context: { [key: string]: object } = {}
-  ) {
-    const template = await vite.transformIndexHtml(url, baseTemplate);
-    const appHtml = await render({ url, context });
-    const contextString = createContext(context);
-    const html = template
-      .replace(`<!--app-html-->`, appHtml)
-      .replace(`<!--head-->`, styles)
-      .replace("<!--context-->", contextString);
-    return html;
-  }
-
-  app.get("/", async (req, res) => {
-    const url = req.originalUrl;
-    try {
-      const settings = await getSettings();
-      const html = await renderPage(url, { settings });
-      res.status(200).set({ "Content-Type": "text/html" }).end(html);
-    } catch (error) {
-      console.error(error);
-      res.redirect("/server-error");
-    }
-  });
-
-  app.get("/server-error", async (_, res) => {
-    const html = await renderPage("/server-error");
-    res.status(404).set({ "Content-Type": "text/html" }).end(html);
-  });
-
-  app.get("*", async (_, res) => {
-    const html = await renderPage("/not-found");
-    res.status(404).set({ "Content-Type": "text/html" }).end(html);
-  });
+  app.use("/", router);
 
   const PORT = process.env.PORT || 5173;
 
   if (!isVercel) {
     app.listen(PORT, () => {
-      console.log(`Server starts on http://localhost:${PORT}`);
+      console.log(`Server started on http://localhost:${PORT}`);
     });
   }
 

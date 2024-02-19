@@ -13,6 +13,7 @@
   margin: 0;
   list-style: none;
 }
+
 .items {
   position: relative;
   flex-grow: 1;
@@ -27,7 +28,7 @@
   opacity: 0.7;
 }
 
-.loader {
+div.loader {
   --loader-color: var(--color-text);
   position: absolute;
   top: 50%;

@@ -6,8 +6,6 @@ export async function getSettings() {
     mode: "cors",
   });
   const data = (await res.json()) as ISettings;
-  if (res.ok) {
-    return data;
-  }
+  if (res.ok) return data;
   throw data;
 }

@@ -9,7 +9,7 @@ export function BusinessCard() {
   const settings = useContext(settingsContext);
   if (!settings) return null;
   return (
-    <section class={styles.section}>
+    <section class={styles.section} id={"address"}>
       <div class={styles.container}>
         <Address
           city="Челябинск"

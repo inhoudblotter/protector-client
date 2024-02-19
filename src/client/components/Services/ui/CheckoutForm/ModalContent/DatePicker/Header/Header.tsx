@@ -21,6 +21,7 @@ export function Header({
     const today = new Date();
     const currentDate = new Date(value);
     return (
+      today.getFullYear() === currentDate.getFullYear() &&
       today.getMonth() === currentDate.getMonth() &&
       today.getDate() === currentDate.getDate()
     );

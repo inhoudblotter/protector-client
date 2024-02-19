@@ -1,0 +1,28 @@
+.container {
+  margin: 0 auto;
+  padding: 0 var(--padding-container);
+  max-width: 1440px;
+  color: var(--color-text);
+  margin-bottom: var(--margin-section);
+}
+
+.title {
+  margin: 0 0 20px 0;
+  font: var(--font-h1);
+  text-align: center;
+}
+
+.subTitle {
+  margin: 0 0 15px 0;
+  font: var(--font-text);
+  font-weight: 600;
+}
+
+.text {
+  margin: 0 0 10px 0;
+  font: var(--font-text);
+}
+
+.item {
+  font: var(--font-text);
+}

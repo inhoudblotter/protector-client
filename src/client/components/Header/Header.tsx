@@ -15,7 +15,7 @@ export function Header({ ...props }: IHeader) {
           <h2 class={styles.title}>ProТектор</h2>
         </a>
         <div class={styles.links}>
-          <a class={styles.link} href="#address">
+          <a class={styles.link} href={`${import.meta.env.VITE_HOST}/#address`}>
             Как добраться?
           </a>
           {settings ? (
