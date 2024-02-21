@@ -4,6 +4,7 @@ import { fileURLToPath } from "url";
 import express from "express";
 import compression from "compression";
 import { createServer as createViteServer } from "vite";
+import cookieParser from "cookie-parser";
 import { renderPage } from "./middlewares/renderPage";
 import router from "./routes";
 

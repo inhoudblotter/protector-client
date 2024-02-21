@@ -1,7 +1,7 @@
+import { NextFunction, Request, Response } from "express";
 import { ViteDevServer } from "vite";
-import { createContext } from "../utils/createContext";
 import { IRender } from "../types/IRender";
-import { NextFunction } from "express";
+import { createContext } from "../utils/createContext";
 
 export function renderPage(
   vite: ViteDevServer,
@@ -9,11 +9,7 @@ export function renderPage(
   render: IRender,
   styles: string
 ) {
-  const func = async (
-    url: string,
-    head: string,
-    preloadState: { [key: string]: object } = {}
-  ) => {
+  const func = async (url: string, head: string, preloadState = {}) => {
     const template = await vite.transformIndexHtml(url, baseTemplate);
     const appHtml = await render({ url, preloadState });
     const context = createContext(preloadState);
