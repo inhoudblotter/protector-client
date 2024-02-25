@@ -49,7 +49,7 @@
   animation: line 2s ease-in-out infinite;
 }
 
-.car {
+svg.car {
   transform: scale(-1, 1);
   --color: var(--loader-color);
   animation: shake 2s ease-in-out infinite;
