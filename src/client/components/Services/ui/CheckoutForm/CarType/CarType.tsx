@@ -30,10 +30,20 @@ export function CarType({ class: className, setValue }: ICarType) {
           class={styles.input}
           type="radio"
           name="car-type"
+          value={"crossover"}
+          onChange={onChange}
+        />
+        <span class={styles.label}>Кроссовер</span>
+      </label>
+      <label class={styles.radio}>
+        <input
+          class={styles.input}
+          type="radio"
+          name="car-type"
           value={"suv"}
           onChange={onChange}
         />
-        <span class={styles.label}>Кроссовер / Внедорожник</span>
+        <span class={styles.label}>Внедорожник</span>
       </label>
     </div>
   );

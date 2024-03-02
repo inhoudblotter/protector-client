@@ -24,8 +24,8 @@ export function Content({
 
   useEffect(() => {
     setSize();
-    window.addEventListener("resize", setSize);
-    return () => window.removeEventListener("resize", setSize);
+    window.addEventListener("resize", setSize, false);
+    return () => window.removeEventListener("resize", setSize, false);
   }, [outerRef, setSize]);
   return (
     <div class={className} ref={outerRef}>

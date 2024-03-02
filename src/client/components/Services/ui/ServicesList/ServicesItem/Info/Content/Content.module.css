@@ -1,0 +1,24 @@
+.container {
+  position: absolute;
+  top: calc(100% + 5px);
+  left: var(--left-position);
+  z-index: 1001;
+  padding: 10px;
+  border-radius: 5px;
+  width: 250px;
+  color: var(--text-color);
+  font: var(--font-text);
+  font-size: 12px;
+  background-color: var(--color-bg);
+  box-shadow: 2px 2px 8px var(--color-text);
+  opacity: 0;
+  transform: translateY(-5px);
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+@media (max-width: 650px) {
+  .container {
+    padding: 5px;
+    width: 200px;
+  }
+}

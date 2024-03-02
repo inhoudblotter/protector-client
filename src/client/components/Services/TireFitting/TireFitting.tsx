@@ -182,6 +182,8 @@ export function TireFitting({ class: className }: ITireFitting) {
           services: [
             {
               title: "Комплекс",
+              descr:
+                "В услугу входит: снятие, демонтаж, монтаж, балансировка и установка.",
               price: getDefaultPrice(
                 settings.services.complex.prices,
                 quantity,

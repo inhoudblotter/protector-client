@@ -1,0 +1,30 @@
+.container {
+  position: relative;
+  margin-right: 5px;
+}
+
+.trigger {
+  display: flex;
+  padding: 0;
+  border: none;
+  cursor: pointer;
+  background-color: transparent;
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+}
+
+.open > span {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.trigger:focus {
+  outline: none;
+}
+
+.trigger:focus-visible .icon {
+  --color: var(--color-accent-darken);
+}

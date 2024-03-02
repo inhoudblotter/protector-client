@@ -7,6 +7,7 @@ import styles from "./UserForm.module.css";
 import { Toast } from "src/client/shared/ui/Toast";
 import { IClient } from "src/client/shared/types/IClient";
 import { cn } from "src/client/shared/utils/cn";
+import { cleanPhone } from "src/client/shared/utils/cleanPhone";
 
 interface IUserForm extends h.JSX.HTMLAttributes<HTMLFormElement> {
   setUser: (user: IClient) => void;
@@ -27,14 +28,22 @@ export function UserForm({ setUser, isLoading }: IUserForm) {
     e.preventDefault();
     setError(null);
     const n = name.trim();
-    const p = phone.trim();
+    const p = cleanPhone(phone.trim());
     const cn = carNumber.trim();
     if (!n && !p) {
-      return setError("Необходимо ввести имя и телефон");
+      return setError("Необходимо ввести имя и телефон.");
     } else if (!n) {
-      return setError("Необходимо ввести имя");
+      return setError("Необходимо ввести имя.");
     } else if (!p) {
-      return setError("Необходимо ввести телефон");
+      return setError("Необходимо ввести телефон.");
+    } else if (!cn) {
+      return setError("Необходимо ввести номер машины.");
+    } else if (p.length !== 12) {
+      return setError("Проверте правильность ввода номера телефона.");
+    } else if (cn.length !== 6) {
+      return setError("Проверьте правильность ввода номера машины");
+    } else if (n.length > 100) {
+      return setError("Имя дожно содержать менее 100 символов.");
     }
     setUser({ name: n, phone: p, carNumber: cn });
   }
@@ -45,7 +54,7 @@ export function UserForm({ setUser, isLoading }: IUserForm) {
         placeholder={"Имя*"}
         name={"name"}
         value={name}
-        maxLength={102}
+        maxLength={100}
         onChange={handleChange(setName)}
       />
       <Input
@@ -58,7 +67,7 @@ export function UserForm({ setUser, isLoading }: IUserForm) {
       />
       <Input
         class={styles.input}
-        placeholder={"Номер авто"}
+        placeholder={"Номер авто*"}
         name={"car-number"}
         value={carNumber}
         maxLength={6}

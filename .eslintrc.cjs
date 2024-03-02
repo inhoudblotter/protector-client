@@ -3,13 +3,14 @@ module.exports = {
     browser: true,
     es2021: true,
   },
+  plugins: ["@typescript-eslint"],
   extends: [
     "eslint:recommended",
     "preact",
     "prettier",
+    "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
   ],
-  plugins: ["@typescript-eslint"],
   parser: "@typescript-eslint/parser",
   parserOptions: {
     ecmaFeatures: {
