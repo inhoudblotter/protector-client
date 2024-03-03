@@ -21,6 +21,7 @@
 }
 
 .bg {
+  font-size: 140px;
   padding-top: 0.5em;
   border-radius: 50px;
   width: 100%;
@@ -36,7 +37,7 @@
 .title {
   margin: 0;
   font: var(--font-h1);
-  font-size: 140px;
+  font-size: inherit;
   line-height: 0.7;
   color: var(--color-bg);
   text-align: center;
@@ -47,10 +48,8 @@
 
 @media (max-width: 1120px) {
   .bg {
-    border-radius: 25px;
-  }
-  .title {
     font-size: 100px;
+    border-radius: 25px;
   }
 }
 
@@ -65,9 +64,7 @@
     margin-bottom: 25px;
   }
   .bg {
-    border-radius: 10px;
-  }
-  .title {
     font-size: 40px;
+    border-radius: 10px;
   }
 }
