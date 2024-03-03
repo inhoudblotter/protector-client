@@ -48,6 +48,9 @@ async function createServer() {
     },
   });
 
+  if (import.meta.hot && isProd)
+    import.meta.hot.accept(() => import.meta.hot?.invalidate());
+
   app.use(vite.middlewares);
 
   app.use(
