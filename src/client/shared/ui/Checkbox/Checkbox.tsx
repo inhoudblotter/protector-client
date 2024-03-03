@@ -20,12 +20,7 @@ export function Checkbox({
         lighten ? styles.lighten : undefined,
       ].join(" ")}
     >
-      <input
-        class={styles.input}
-        type="checkbox"
-        {...props}
-        onClick={() => console.log("yep")}
-      />
+      <input class={styles.input} type="checkbox" {...props} />
       <div class={styles.icon} />
       <h3 class={styles.label}>{title}</h3>
     </label>

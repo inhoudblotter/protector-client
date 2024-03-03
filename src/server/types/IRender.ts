@@ -1,7 +1,7 @@
 export type IRender = ({
   url,
-  preloadState,
+  context,
 }: {
   url: string;
-  preloadState?: object;
+  context?: object;
 }) => Promise<string>;

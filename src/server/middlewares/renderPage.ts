@@ -9,14 +9,14 @@ export function renderPage(
   render: IRender,
   styles: string
 ) {
-  const func = async (url: string, head: string, preloadState = {}) => {
+  const func = async (url: string, head: string, context = {}) => {
     const template = await vite.transformIndexHtml(url, baseTemplate);
-    const appHtml = await render({ url, preloadState });
-    const context = createContext(preloadState);
+    const appHtml = await render({ url, context });
+    const contextString = createContext(context);
     const html = template
       .replace(`<!--app-html-->`, appHtml)
       .replace(`<!--head-->`, head + styles)
-      .replace(`<!--context-->`, context);
+      .replace(`<!--context-->`, contextString);
     return html;
   };
   const middleware = (req: Request, _: Response, next: NextFunction) => {

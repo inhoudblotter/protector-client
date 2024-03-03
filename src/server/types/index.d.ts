@@ -1,4 +1,4 @@
-import { Express, Router, Request } from "express";
+import { Express, Request } from "express";
 
 declare global {
   declare namespace Express {
