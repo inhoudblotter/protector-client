@@ -15,9 +15,7 @@ export default defineConfig({
     include: ["./src/**/*.jsx"],
   },
   server: {
-    hmr: {
-      overlay: false,
-    },
+    hmr: false,
   },
   plugins: [preact()],
 });
