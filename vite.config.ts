@@ -14,5 +14,8 @@ export default defineConfig({
   optimizeDeps: {
     include: ["./src/**/*.jsx"],
   },
+  server: {
+    hmr: false,
+  },
   plugins: [preact()],
 });

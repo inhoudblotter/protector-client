@@ -4,7 +4,9 @@ export function Hero() {
   return (
     <section class={styles.section}>
       <div class={styles.container}>
-        <h1 class={styles.title}>Шиномонтаж</h1>
+        <div class={styles.bg}>
+          <h1 class={styles.title}>Шиномонтаж</h1>
+        </div>
       </div>
     </section>
   );
