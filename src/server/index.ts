@@ -37,7 +37,7 @@ export async function getStyles() {
 
 async function createServer() {
   const app = express();
-  console.log(!isProd);
+
   const vite = await createViteServer({
     server: { middlewareMode: true, hmr: !isProd },
     appType: "custom",
