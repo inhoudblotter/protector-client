@@ -38,7 +38,7 @@ export function UserForm({ setUser, isLoading }: IUserForm) {
       return setError("Необходимо ввести телефон.");
     } else if (!cn) {
       return setError("Необходимо ввести номер машины.");
-    } else if (p.length !== 12) {
+    } else if (p.length > 12 || p.length < 11) {
       return setError("Проверте правильность ввода номера телефона.");
     } else if (cn.length !== 6) {
       return setError("Проверьте правильность ввода номера машины");
