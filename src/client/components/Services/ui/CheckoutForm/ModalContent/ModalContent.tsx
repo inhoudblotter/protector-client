@@ -49,5 +49,12 @@ export function ModalContent({
     return <ErrorOnSubmit error={errorOnSubmit} clearError={clearError} />;
   if (isSuccess)
     return <OrderCreated text={checkoutDoneText} closeFunction={onClose} />;
-  return <UserForm setUser={setUser} isLoading={isLoading} />;
+  return (
+    <UserForm
+      date={date}
+      setDate={setDate}
+      setUser={setUser}
+      isLoading={isLoading}
+    />
+  );
 }

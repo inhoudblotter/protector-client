@@ -16,6 +16,11 @@
   color: var(--color-text);
 }
 
+.personalData a {
+  font: inherit;
+  color: inherit;
+}
+
 .btn {
   margin-top: auto;
   margin-bottom: var(--margin-block);
@@ -25,4 +30,15 @@
   position: fixed;
   bottom: 15px;
   right: 15px;
+}
+
+.date {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--margin-block);
+}
+
+.date svg {
+  --color: var(--color-bg);
 }

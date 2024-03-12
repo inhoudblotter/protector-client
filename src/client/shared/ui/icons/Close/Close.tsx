@@ -1,8 +1,10 @@
-import { IIcon } from "./IIcon";
-
-export function Close({ ...props }: IIcon) {
+import { cn } from "src/client/shared/utils/cn";
+import { IIcon } from "../IIcon";
+import styles from "./Close.module.css";
+export function Close({ class: className, ...props }: IIcon) {
   return (
     <svg
+      class={cn(className, styles.icon)}
       width="25px"
       height="25px"
       viewBox="0 0 1024 1024"

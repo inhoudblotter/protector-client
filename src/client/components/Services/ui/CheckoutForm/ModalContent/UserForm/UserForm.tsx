@@ -1,6 +1,6 @@
 import { h } from "preact";
 import { ChangeEvent, TargetedEvent } from "preact/compat";
-import { useState } from "preact/hooks";
+import { StateUpdater, useState } from "preact/hooks";
 import { Button } from "src/client/shared/ui/Button";
 import { Input } from "src/client/shared/ui/Input";
 import styles from "./UserForm.module.css";
@@ -8,13 +8,16 @@ import { Toast } from "src/client/shared/ui/Toast";
 import { IClient } from "src/client/shared/types/IClient";
 import { cn } from "src/client/shared/utils/cn";
 import { cleanPhone } from "src/client/shared/utils/cleanPhone";
+import { Close } from "src/client/shared/ui/icons";
 
 interface IUserForm extends h.JSX.HTMLAttributes<HTMLFormElement> {
+  date?: string | null;
+  setDate?: StateUpdater<string | null>;
   setUser: (user: IClient) => void;
   isLoading: boolean;
 }
 
-export function UserForm({ setUser, isLoading }: IUserForm) {
+export function UserForm({ date, setDate, setUser, isLoading }: IUserForm) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [carNumber, setCarNumber] = useState("");
@@ -49,6 +52,19 @@ export function UserForm({ setUser, isLoading }: IUserForm) {
   }
   return (
     <div class={cn(styles.container, isLoading && styles.loading)}>
+      {date && setDate && (
+        <Button onClick={() => setDate(null)} class={styles.date}>
+          <span>
+            {new Date(date).toLocaleString("ru-RU", {
+              hour: "2-digit",
+              minute: "2-digit",
+              day: "numeric",
+              month: "short",
+            })}
+          </span>
+          <Close />
+        </Button>
+      )}
       <Input
         class={styles.input}
         placeholder={"Имя*"}
@@ -83,8 +99,10 @@ export function UserForm({ setUser, isLoading }: IUserForm) {
         Записаться
       </Button>
       <span class={styles.personalData}>
-        Нажимаяя на кнопку вы соглашаетесь с политикой обработки персональных
-        данных
+        Нажимаяя на кнопку вы соглашаетесь с{" "}
+        <a href={"/personal-data-terms"} target={"_blank"} rel="noreferrer">
+          политикой обработки персональных данных
+        </a>
       </span>
       {error && (
         <Toast
