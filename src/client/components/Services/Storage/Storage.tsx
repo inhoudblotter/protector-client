@@ -2,8 +2,8 @@ import { h } from "preact";
 import {
   useCallback,
   useContext,
-  useEffect,
   useMemo,
+  useRef,
   useState,
 } from "preact/hooks";
 import { GroupItem } from "../ui/GroupItem";
@@ -16,6 +16,8 @@ import { settingsContext } from "src/client/shared/model/slices/settings";
 import { IPrice } from "src/client/shared/types/IPrices";
 import { isError } from "src/client/shared/types/typeGuards/isError";
 import { IError } from "src/client/shared/types/IError";
+import { validateUserFields } from "../utils/validateUserFields";
+import { cleanPhone } from "src/client/shared/utils/cleanPhone";
 
 type IStorage = h.JSX.HTMLAttributes<HTMLLIElement>;
 
@@ -32,13 +34,18 @@ function getPrice(prices: IPrice, wheels: number, radius: number) {
 
 export function Storage({ class: className }: IStorage) {
   const settings = useContext(settingsContext);
-  const [user, setUser] = useState<IClient | null>(null);
+  const [user, setUser] = useState<IClient>({
+    name: "",
+    phone: "",
+    carNumber: "",
+  });
   const [error, setError] = useState<null | string>(null);
   const { quantity, onChangeQuantity } = useQuantityField();
   const { radius, onChangeRadius } = useRadiusField();
   const [errorOnSubmit, setErrorOnSubmit] = useState<IError | null>(null);
-  const [isLoading, setLoading] = useState(false);
+  const isLoading = useRef(false);
   const [isSuccess, setSuccess] = useState(false);
+  const [validateError, setValidateError] = useState<string | null>(null);
   const checkoutDoneText = useMemo(() => {
     if (!settings) return "";
     return `Ждём вас с ${settings.work_time.from.hours
@@ -61,44 +68,51 @@ export function Storage({ class: className }: IStorage) {
     return true;
   }
 
-  const onSubmit = useCallback(() => {
-    if (!user) return;
-    setErrorOnSubmit(null);
-    setLoading(true);
-    createOrder({
-      client: {
-        name: user.name,
-        phone: user.phone,
-      },
-      services: ["storage"],
-      wheels: {
-        quantity,
-        radius,
-      },
-    })
-      .then((id) => {
-        if (id) {
-          setSuccess(true);
-        } else throw new Error("Failed to create record.");
+  const onSubmit: h.JSX.GenericEventHandler<HTMLFormElement> = useCallback(
+    (e) => {
+      e.preventDefault();
+      if (isLoading.current) return;
+      const name = user.name.trim();
+      const phone = cleanPhone(user.phone.trim());
+      const ve = validateUserFields(name, phone, "a000aa");
+      if (ve) return setValidateError(ve);
+      isLoading.current = true;
+      setErrorOnSubmit(null);
+      createOrder({
+        client: {
+          name,
+          phone,
+          carNumber: "",
+        },
+        services: ["storage"],
+        wheels: {
+          quantity,
+          radius,
+        },
       })
-      .catch((error) => {
-        if (isError(error)) {
-          setErrorOnSubmit(error);
-        } else {
-          setErrorOnSubmit({ code: 500, message: "Что-то пошло не так..." });
-          throw error;
-        }
-      })
-      .finally(() => setLoading(false));
-  }, [user, setErrorOnSubmit, setLoading, quantity, radius, setSuccess]);
-
-  useEffect(() => {
-    if (user) onSubmit();
-  }, [user, onSubmit]);
+        .then((id) => {
+          if (id) {
+            setSuccess(true);
+          } else throw new Error("Failed to create record.");
+        })
+        .catch((error) => {
+          if (isError(error)) {
+            setErrorOnSubmit(error);
+          } else {
+            setErrorOnSubmit({ code: 500, message: "Что-то пошло не так..." });
+            throw error;
+          }
+        })
+        .finally(() => isLoading.current);
+    },
+    [user, setErrorOnSubmit, quantity, radius, setSuccess, isLoading]
+  );
 
   if (!settings) return <FormLoader title="Хранение" />;
   return (
     <GroupItem
+      id={"storage"}
+      onSubmit={onSubmit}
       title="Хранение"
       class={className}
       error={error ? { message: error, clean: () => setError(null) } : null}
@@ -126,6 +140,9 @@ export function Storage({ class: className }: IStorage) {
         isLoading,
         isSuccess,
         checkoutDoneText,
+        validateError,
+        setValidateError,
+        setSuccess,
       }}
     />
   );

@@ -1,6 +1,6 @@
 export interface IClient {
   name: string;
   phone: string;
-  carNumber?: string | null;
+  carNumber: string;
   carType?: "passengerCar" | "suv";
 }

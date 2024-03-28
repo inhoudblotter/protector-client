@@ -1,4 +1,4 @@
-import { h } from "preact";
+import { RefObject, h } from "preact";
 import { StateUpdater, useState, useCallback } from "preact/hooks";
 import { Field, IField } from "../Field";
 import { CarType, ICarType } from "./CarType";
@@ -21,13 +21,16 @@ export interface ICheckoutForm
   services: string[];
   wheels: number;
   setDate?: StateUpdater<string | null>;
-  user: IClient | null;
-  setUser: StateUpdater<IClient | null>;
+  user: IClient;
+  setUser: StateUpdater<IClient>;
   errorOnSubmit: IError | null;
   setErrorOnSubmit: StateUpdater<IError | null>;
   clearError: () => void;
   isSuccess: boolean;
-  isLoading: boolean;
+  isLoading: RefObject<boolean>;
+  validateError: string | null;
+  setValidateError: StateUpdater<string | null>;
+  setSuccess: StateUpdater<boolean>;
 }
 
 export function CheckoutForm({
@@ -49,13 +52,16 @@ export function CheckoutForm({
   setErrorOnSubmit,
   services,
   wheels,
+  validateError,
+  setValidateError,
+  setSuccess,
 }: ICheckoutForm) {
   const [isModalOpen, setModalOpen] = useState(false);
   const onClose = useCallback(() => {
     if (setDate) setDate(null);
-    setUser(null);
     setModalOpen(false);
-  }, [setDate, setUser, setModalOpen]);
+    setSuccess(false);
+  }, [setDate, setModalOpen, setSuccess]);
   return (
     <fieldset class={[styles.container, className].join(" ")}>
       {carTypeProps && <CarType class={styles.carType} {...carTypeProps} />}
@@ -98,6 +104,8 @@ export function CheckoutForm({
             errorOnSubmit={errorOnSubmit}
             clearError={clearError}
             isLoading={isLoading}
+            validateError={validateError}
+            setValidateError={setValidateError}
           />
         </Modal>
       )}

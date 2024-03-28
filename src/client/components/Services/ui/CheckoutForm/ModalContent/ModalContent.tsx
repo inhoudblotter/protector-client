@@ -5,21 +5,24 @@ import { OrderCreated } from "./OrderCreated";
 import { StateUpdater } from "preact/hooks";
 import { ErrorOnSubmit } from "./ErrrorOnSubmit";
 import { IError } from "src/client/shared/types/IError";
+import { RefObject } from "preact";
 
 interface IModalContent {
   date?: string | null;
   services: string[];
   wheels: number;
   setDate?: StateUpdater<string | null>;
-  user: IClient | null;
-  setUser: StateUpdater<IClient | null>;
+  user: IClient;
+  setUser: StateUpdater<IClient>;
   isSuccess: boolean;
   checkoutDoneText: string;
   errorOnSubmit: IError | null;
   setErrorOnSubmit: StateUpdater<IError | null>;
   clearError: () => void;
   onClose: () => void;
-  isLoading: boolean;
+  isLoading: RefObject<boolean>;
+  validateError: string | null;
+  setValidateError: StateUpdater<string | null>;
 }
 
 export function ModalContent({
@@ -35,6 +38,9 @@ export function ModalContent({
   isLoading,
   services,
   wheels,
+  user,
+  validateError,
+  setValidateError,
 }: IModalContent) {
   if (setDate && !date)
     return (
@@ -52,9 +58,12 @@ export function ModalContent({
   return (
     <UserForm
       date={date}
+      user={user}
       setDate={setDate}
       setUser={setUser}
       isLoading={isLoading}
+      validateError={validateError}
+      setValidateError={setValidateError}
     />
   );
 }

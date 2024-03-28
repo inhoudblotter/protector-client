@@ -6,6 +6,7 @@ import {
   useMemo,
   useEffect,
   useContext,
+  useRef,
 } from "preact/hooks";
 import { ChangeEvent } from "preact/compat";
 import { formatTime } from "src/client/shared/utils/formatTime";
@@ -19,6 +20,8 @@ import { getDefaultPrice } from "../utils/getDefaultPrice";
 import { FormLoader } from "../ui/FormLoader/FormLoader";
 import { isError } from "src/client/shared/types/typeGuards/isError";
 import { IError } from "src/client/shared/types/IError";
+import { cleanPhone } from "src/client/shared/utils/cleanPhone";
+import { validateUserFields } from "../utils/validateUserFields";
 
 type ITireFitting = h.JSX.HTMLAttributes<HTMLLIElement>;
 
@@ -31,14 +34,19 @@ export function TireFitting({ class: className }: ITireFitting) {
   const [balancing, setBalancing] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [date, setDate] = useState<string | null>(null);
-  const [user, setUser] = useState<IClient | null>(null);
+  const [user, setUser] = useState<IClient>({
+    name: "",
+    phone: "",
+    carNumber: "",
+  });
   const { radius, onChangeRadius } = useRadiusField();
   const { quantity, onChangeQuantity } = useQuantityField();
   const { carType, onChangeCarType } = useCarTypeField();
   const [isSuccess, setSuccess] = useState(false);
   const [errorOnSubmit, setErrorOnSubmit] = useState<IError | null>(null);
-  const [isLoading, setLoading] = useState(false);
   const [services, setServices] = useState<string[]>([]);
+  const [validateError, setValidateError] = useState<string | null>(null);
+  const isLoading = useRef(false);
   useEffect(() => {
     if (complex) {
       setServices(["complex"]);
@@ -113,10 +121,19 @@ export function TireFitting({ class: className }: ITireFitting) {
     )}.`;
   }, [date]);
 
-  const onSubmit = useCallback(() => {
-    if (user && date) {
+  const onSubmit: h.JSX.GenericEventHandler<HTMLFormElement> = useCallback(
+    (e) => {
+      e.preventDefault();
+      if (isLoading.current) return;
+      if (!date) return setValidateError("Необходимо выбрать дату.");
+      setError(null);
+      const n = user.name.trim();
+      const p = cleanPhone(user.phone.trim());
+      const cn = user.carNumber.trim();
+      const ve = validateUserFields(n, p, cn);
+      if (ve) return setValidateError(ve);
+      isLoading.current = true;
       setErrorOnSubmit(null);
-      setLoading(true);
       let services;
       if (complex) {
         services = ["complex"];
@@ -132,7 +149,9 @@ export function TireFitting({ class: className }: ITireFitting) {
       }
       createOrder({
         client: {
-          ...user,
+          name: n,
+          phone: p,
+          carNumber: cn,
           carType: carType || undefined,
         },
         services,
@@ -153,31 +172,32 @@ export function TireFitting({ class: className }: ITireFitting) {
             throw error;
           }
         })
-        .finally(() => setLoading(false));
-    }
-  }, [
-    user,
-    complex,
-    removalAndInstalation,
-    dismantling,
-    instalation,
-    balancing,
-    date,
-    carType,
-    radius,
-    quantity,
-    setSuccess,
-    setErrorOnSubmit,
-  ]);
-  useEffect(() => {
-    if (user) onSubmit();
-  }, [user, onSubmit]);
+        .finally(() => (isLoading.current = false));
+    },
+    [
+      user,
+      complex,
+      removalAndInstalation,
+      dismantling,
+      instalation,
+      balancing,
+      date,
+      carType,
+      radius,
+      quantity,
+      setSuccess,
+      setErrorOnSubmit,
+      isLoading,
+    ]
+  );
   if (!settings) return <FormLoader title="Переобувка" />;
   return (
     <>
       <GroupItem
+        id={"tire-fitting"}
         title="Переобувка"
         class={className}
+        onSubmit={onSubmit}
         servicesProps={{
           services: [
             {
@@ -248,6 +268,8 @@ export function TireFitting({ class: className }: ITireFitting) {
           carTypeProps: { setValue: onChangeCarType },
           radiusProps: { value: radius, onChange: onChangeRadius },
           quantityProps: { value: quantity, onChange: onChangeQuantity },
+          validateError,
+          setValidateError,
           validateCheckoutForm,
           services,
           wheels: quantity,
@@ -261,7 +283,7 @@ export function TireFitting({ class: className }: ITireFitting) {
           isSuccess,
           checkoutDoneText,
           isLoading,
-          onSubmit,
+          setSuccess,
         }}
       />
     </>

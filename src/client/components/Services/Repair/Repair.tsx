@@ -5,6 +5,7 @@ import {
   useMemo,
   useEffect,
   useContext,
+  useRef,
 } from "preact/hooks";
 import { GroupItem } from "../ui/GroupItem";
 import { ChangeEvent } from "preact/compat";
@@ -20,6 +21,8 @@ import { getMinMaxPrice } from "../utils/getMinMaxPrice";
 import { getDefaultPrice } from "../utils/getDefaultPrice";
 import { IError } from "src/client/shared/types/IError";
 import { isError } from "src/client/shared/types/typeGuards/isError";
+import { validateUserFields } from "../utils/validateUserFields";
+import { cleanPhone } from "src/client/shared/utils/cleanPhone";
 
 type IRepair = h.JSX.HTMLAttributes<HTMLLIElement>;
 
@@ -33,10 +36,15 @@ export function Repair({ class: className }: IRepair) {
   const { quantity, onChangeQuantity } = useQuantityField(1);
   const { radius, onChangeRadius } = useRadiusField();
   const [date, setDate] = useState<string | null>(null);
-  const [user, setUser] = useState<IClient | null>(null);
+  const [user, setUser] = useState<IClient>({
+    name: "",
+    phone: "",
+    carNumber: "",
+  });
   const [error, setError] = useState<string | null>(null);
   const [errorOnSubmit, setErrorOnSubmit] = useState<IError | null>(null);
-  const [isLoading, setLoading] = useState(false);
+  const isLoading = useRef(false);
+  const [validateError, setValidateError] = useState<string | null>(null);
   const [isSuccess, setSuccess] = useState(false);
   const [services, setServices] = useState<string[]>([]);
   const onChange = useCallback(
@@ -81,11 +89,25 @@ export function Repair({ class: className }: IRepair) {
         .map((v) => v[0])
     );
   }, [addSpikes, cut, puncture, removalAndInstalation]);
-  const onSubmit = useCallback(() => {
-    if (user && date && carType) {
+  const onSubmit: h.JSX.GenericEventHandler<HTMLFormElement> = useCallback(
+    (e) => {
+      e.preventDefault();
+      if (isLoading.current) return;
+      if (!date) return setValidateError("Необходимо выбрать дату.");
+      if (!carType)
+        return setValidateError("Необходимо выбрать тип автомобиля.");
+      const name = user.name.trim();
+      const phone = cleanPhone(user.phone.trim());
+      const carNumber = user.carNumber.trim();
+      const vm = validateUserFields(name, phone, carNumber);
+      if (vm) return setValidateError(vm);
+      isLoading.current = true;
+
       createOrder({
         client: {
-          ...user,
+          name,
+          phone,
+          carNumber,
           carType,
         },
         services,
@@ -108,27 +130,27 @@ export function Repair({ class: className }: IRepair) {
             throw error;
           }
         })
-        .finally(() => setLoading(false));
-    }
-  }, [
-    user,
-    carType,
-    services,
-    date,
-    radius,
-    quantity,
-    setSuccess,
-    setLoading,
-    setErrorOnSubmit,
-  ]);
-  useEffect(() => {
-    if (user) onSubmit();
-  }, [user, onSubmit]);
+        .finally(() => (isLoading.current = false));
+    },
+    [
+      user,
+      carType,
+      services,
+      date,
+      radius,
+      quantity,
+      setSuccess,
+      isLoading,
+      setErrorOnSubmit,
+    ]
+  );
   if (!settings) return <FormLoader title="Ремонт" />;
   return (
     <GroupItem
       title="Ремонт"
       class={className}
+      onSubmit={onSubmit}
+      id={"repair"}
       servicesProps={{
         services: [
           {
@@ -195,7 +217,9 @@ export function Repair({ class: className }: IRepair) {
         setDate,
         validateCheckoutForm,
         checkoutDoneText,
-        onSubmit,
+        validateError,
+        setValidateError,
+        setSuccess,
       }}
     />
   );

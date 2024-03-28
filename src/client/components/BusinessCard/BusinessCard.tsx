@@ -4,6 +4,7 @@ import styles from "./BusinessCard.module.css";
 import { Map } from "./Map";
 import { useContext } from "preact/hooks";
 import { settingsContext } from "src/client/shared/model/slices/settings";
+import { formatPhone } from "src/client/shared/utils/formatPhone";
 
 export function BusinessCard() {
   const settings = useContext(settingsContext);
@@ -16,6 +17,10 @@ export function BusinessCard() {
           street={settings.address.street}
           house={settings.address.house}
           class={styles.address}
+          phone={formatPhone(settings.phone)}
+          latitude={settings.address.latitude}
+          longitude={settings.address.longitude}
+          workTime={settings.work_time}
         />
         <Map
           cordinates={[settings.address.latitude, settings.address.longitude]}

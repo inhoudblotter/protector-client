@@ -21,6 +21,7 @@ export function GroupItem({
   class: className,
   error,
   onSubmit,
+  id,
 }: IGroupItem) {
   const { context: cluesContext, dispatch: cluesDispatch } = useCluesContext();
 
@@ -30,7 +31,7 @@ export function GroupItem({
   }, [setShowClue, showClue, cluesContext.serviceClue]);
 
   return (
-    <li class={[styles.item, className].join(" ")}>
+    <li class={[styles.item, className].join(" ")} id={id}>
       <Accordion title={title} onOpen={onOpen}>
         <form class={styles.form} onSubmit={onSubmit}>
           <ServicesList class={styles.services} {...servicesProps} />
